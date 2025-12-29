@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>GES School Data Collection</title>
 <script src="https://cdn.tailwindcss.com"></script>
 <style>
@@ -11,6 +11,7 @@ body {
 }
 .gradient-bg {
     background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    min-height: 100vh;
 }
 .glass-effect {
     background: rgba(255, 255, 255, 0.95);
@@ -39,25 +40,65 @@ body {
     0% { transform: rotate(0deg); }
     100% { transform: rotate(360deg); }
 }
+
+/* Mobile Optimizations */
+@media (max-width: 768px) {
+    body {
+        padding: 0.5rem !important;
+    }
+        .glass-effect {
+        padding: 1rem !important;
+        border-radius: 1rem !important;
+    }
+    h1 {
+        font-size: 1.75rem !important;
+    }
+    h2 {
+        font-size: 1.25rem !important;
+    }
+        .w-10.h-10 {
+        width: 2rem !important;
+        height: 2rem !important;
+    }
+    input, select, textarea {
+        font-size: 16px !important; /* Prevents zoom on iOS */
+    }
+}
+
+/* Desktop Optimizations */
+@media (min-width: 1024px) {
+    .max-w-5xl {
+        max-width: 70rem;
+    }
+}
+
+/* Prevent horizontal scroll */
+* {
+    box-sizing: border-box;
+}
+html, body {
+    overflow-x: hidden;
+    width: 100%;
+}
 </style>
 </head>
-<body class="min-h-screen gradient-bg p-4">
-<div class="max-w-5xl mx-auto py-8">
+<body class="min-h-screen gradient-bg p-2 sm:p-4 md:p-6">
+<div class="max-w-5xl mx-auto py-4 sm:py-6 md:py-8 px-2 sm:px-4">
 <!-- Header -->
-<div class="text-center mb-8">
-<div class="inline-block p-4 bg-white rounded-full shadow-lg mb-4">
-<svg class="w-12 h-12 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+<div class="text-center mb-6 sm:mb-8">
+<div class="inline-block p-3 sm:p-4 bg-white rounded-full shadow-lg mb-3 sm:mb-4">
+<svg class="w-8 h-8 sm:w-12 sm:h-12 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path>
 </svg>
 </div>
-<h1 class="text-4xl font-bold text-white mb-2">School Data Collection</h1>
-<p class="text-indigo-100 text-lg">Ahafo Ano South West Education Directorate</p>
-<p class="text-indigo-200 text-sm mt-1">Ghana Education Service</p>
+<h1 class="text-2xl sm:text-3xl md:text-4xl font-bold text-white mb-2">School Data Collection</h1>
+<p class="text-sm sm:text-base md:text-lg text-indigo-100">Ahafo Ano South West Education Directorate</p>
+<p class="text-xs sm:text-sm text-indigo-200 mt-1">Ghana Education Service</p>
 <p id="autoSaveIndicator" class="text-gray-400 text-xs mt-2">Auto-saving...</p>
 </div>
 
 <!-- Main Form Card -->
-<div class="glass-effect rounded-2xl shadow-2xl p-8 md:p-10">
+<div class="glass-effect rounded-xl sm:rounded-2xl shadow-2xl p-4 sm:p-6 md:p-8 lg:p-10">
 <div id="statusMessage" class="hidden mb-6 p-4 rounded-xl flex items-start gap-3 animate-fade-in">
 <svg id="statusIcon" class="w-6 h-6 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
@@ -79,7 +120,7 @@ body {
 <div class="space-y-8">
 <!-- Circuit & School Selection -->
 <section class="border-b-2 border-indigo-100 pb-8">
-<div class="flex items-center gap-3 mb-6">
+<div class="flex items-center gap-2 sm:gap-3 mb-4 sm:mb-6">
 <div class="w-10 h-10 bg-indigo-100 rounded-lg flex items-center justify-center">
 <span class="text-indigo-600 font-bold text-lg">1</span>
 </div>
@@ -112,7 +153,7 @@ body {
 
 <!-- Basic Information -->
 <section class="border-b-2 border-indigo-100 pb-8">
-<div class="flex items-center gap-3 mb-6">
+<div class="flex items-center gap-2 sm:gap-3 mb-4 sm:mb-6">
 <div class="w-10 h-10 bg-indigo-100 rounded-lg flex items-center justify-center">
 <span class="text-indigo-600 font-bold text-lg">2</span>
 </div>
@@ -147,13 +188,13 @@ body {
 
 <!-- School Categories -->
 <section class="border-b-2 border-indigo-100 pb-8">
-<div class="flex items-center gap-3 mb-6">
+<div class="flex items-center gap-2 sm:gap-3 mb-4 sm:mb-6">
 <div class="w-10 h-10 bg-indigo-100 rounded-lg flex items-center justify-center">
 <span class="text-indigo-600 font-bold text-lg">3</span>
 </div>
 <h2 class="text-2xl font-bold text-gray-800">School Categories</h2>
 </div>
-<div class="grid md:grid-cols-3 gap-4">
+<div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 sm:gap-4">
 <label class="flex items-center gap-3 p-4 border-2 border-gray-200 rounded-xl cursor-pointer hover:bg-indigo-50 hover:border-indigo-300 transition-all">
 <input type="checkbox" id="hasCreche" class="w-5 h-5 text-indigo-600 border-gray-300 rounded focus:ring-indigo-500">
 <span class="text-sm font-medium text-gray-700">Creche</span>
@@ -187,7 +228,7 @@ body {
 
 <!-- Staff & Facilities -->
 <section class="border-b-2 border-indigo-100 pb-8">
-<div class="flex items-center gap-3 mb-6">
+<div class="flex items-center gap-2 sm:gap-3 mb-4 sm:mb-6">
 <div class="w-10 h-10 bg-indigo-100 rounded-lg flex items-center justify-center">
 <span class="text-indigo-600 font-bold text-lg">4</span>
 </div>
@@ -255,7 +296,7 @@ body {
 
 <!-- Support & Challenges -->
 <section class="border-b-2 border-indigo-100 pb-8">
-<div class="flex items-center gap-3 mb-6">
+<div class="flex items-center gap-2 sm:gap-3 mb-4 sm:mb-6">
 <div class="w-10 h-10 bg-indigo-100 rounded-lg flex items-center justify-center">
 <span class="text-indigo-600 font-bold text-lg">5</span>
 </div>
@@ -301,7 +342,7 @@ body {
 
 <!-- Enrollment Details -->
 <section class="pb-8">
-<div class="flex items-center gap-3 mb-6">
+<div class="flex items-center gap-2 sm:gap-3 mb-4 sm:mb-6">
 <div class="w-10 h-10 bg-indigo-100 rounded-lg flex items-center justify-center">
 <span class="text-indigo-600 font-bold text-lg">6</span>
 </div>
@@ -331,7 +372,7 @@ body {
 </div>
 </section>
 
-<button id="submitBtn" class="w-full bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white font-bold py-4 px-8 rounded-xl transition-all transform hover:scale-105 shadow-lg disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none">
+<button id="submitBtn" class="w-full bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white font-bold py-3 sm:py-4 px-6 sm:px-8 rounded-lg sm:rounded-xl transition-all transform hover:scale-105 shadow-lg disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none text-sm sm:text-base">
 <span class="flex items-center justify-center gap-2">
 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
@@ -343,8 +384,8 @@ Submit School Data
 </div>
 
 <!-- Footer -->
-<div class="text-center mt-8 text-white">
-<p class="text-sm opacity-90">© 2025 Ghana Education Service - Ahafo Ano South West</p>
+<div class="<div class="text-center mt-6 sm:mt-8 text-white px-4">
+<p class="text-xs sm:text-sm opacity-90">© 2025 Ghana Education Service - Ahafo Ano South West</p>
 </div>
 </div>
 
