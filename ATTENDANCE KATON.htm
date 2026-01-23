@@ -10,32 +10,52 @@ body {
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
 }
 .gradient-bg {
-    background: linear-gradient(135deg, #1e3a8a 0%, #7c3aed 50%, #db2777 100%);
+    background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 25%, #312e81 50%, #6b21a8 75%, #ec4899 100%);
+    background-size: 200% 200%;
+    animation: gradient-shift 15s ease infinite;
+}
+@keyframes gradient-shift {
+    0%, 100% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
 }
 .glass-effect {
-    background: rgba(255, 255, 255, 0.97);
-    backdrop-filter: blur(15px);
+    background: rgba(255, 255, 255, 0.98);
+    backdrop-filter: blur(20px);
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
 }
 .card-hover {
-    transition: all 0.3s ease;
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
 }
 .card-hover:hover {
-    transform: translateY(-4px);
-    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.15);
+    transform: translateY(-6px) scale(1.01);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
 }
 .input-focus {
-    transition: all 0.3s ease;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 .input-focus:focus {
     transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+    box-shadow: 0 8px 20px rgba(59, 130, 246, 0.4);
+    border-color: #3b82f6;
 }
-@keyframes pulse-slow {
-    0%, 100% { opacity: 1; }
-    50% { opacity: 0.6; }
+@keyframes float {
+    0%, 100% { transform: translateY(0px); }
+    50% { transform: translateY(-10px); }
 }
-.pulse-slow {
-    animation: pulse-slow 2s ease-in-out infinite;
+.float-animation {
+    animation: float 3s ease-in-out infinite;
+}
+@keyframes shimmer {
+    0% { background-position: -1000px 0; }
+    100% { background-position: 1000px 0; }
+}
+.shimmer {
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+    background-size: 1000px 100%;
+    animation: shimmer 3s infinite;
+}
+.button-glow:hover {
+    box-shadow: 0 0 20px rgba(59, 130, 246, 0.6), 0 0 40px rgba(147, 51, 234, 0.4);
 }
 </style>
 </head>
@@ -43,37 +63,45 @@ body {
 <div class="max-w-7xl mx-auto py-8">
 <!-- Header -->
 <div class="text-center mb-8">
-<div class="inline-block p-5 bg-white rounded-2xl shadow-2xl mb-6">
-<svg class="w-16 h-16 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+<div class="inline-block p-6 bg-gradient-to-br from-white to-blue-50 rounded-3xl shadow-2xl mb-6 float-animation border-4 border-white/30">
+<svg class="w-20 h-20 text-transparent" fill="url(#icon-gradient)" stroke="url(#icon-gradient)" viewBox="0 0 24 24">
+<defs>
+<linearGradient id="icon-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+<stop offset="0%" style="stop-color:#3b82f6;stop-opacity:1" />
+<stop offset="100%" style="stop-color:#8b5cf6;stop-opacity:1" />
+</linearGradient>
+</defs>
 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"></path>
 </svg>
 </div>
-<h1 class="text-5xl font-bold text-white mb-3 drop-shadow-lg">AHAFO ANO SOUTH-WEST</h1>
-<p class="text-blue-100 text-xl font-semibold">2025/2026 TERM 2</p>
-<p class="text-blue-200 text-sm mt-2">STATISTICS & PLANNING UNIT</p>
-<p class="text-blue-300 text-sm">Ghana Education Service - Ashanti Region</p>
+<h1 class="text-6xl font-black text-white mb-4 drop-shadow-2xl tracking-tight">AHAFO ANO SOUTH-WEST</h1>
+<div class="inline-block px-6 py-3 bg-white/20 backdrop-blur-md rounded-2xl border-2 border-white/40 mb-4">
+<p class="text-white text-2xl font-bold">2025/2026 TERM 2</p>
+</div>
+<p class="text-blue-100 text-lg font-semibold mt-3">STATISTICS & PLANNING UNIT</p>
+<p class="text-blue-200 text-sm mt-1">Ghana Education Service - Ashanti Region</p>
 </div>
 
 <!-- Main Form Card -->
-<div class="glass-effect rounded-3xl shadow-2xl p-8 md:p-12 mb-6">
+<div class="glass-effect rounded-3xl shadow-2xl p-8 md:p-12 mb-6 border-2 border-white/50">
 <!-- Status Message -->
-<div id="statusMessage" class="hidden mb-6 p-4 rounded-xl flex items-start gap-3">
-<svg id="statusIcon" class="w-6 h-6 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"></svg>
-<span id="statusText" class="font-medium"></span>
+<div id="statusMessage" class="hidden mb-6 p-5 rounded-2xl flex items-start gap-3 border-2">
+<svg id="statusIcon" class="w-7 h-7 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"></svg>
+<span id="statusText" class="font-semibold text-lg"></span>
 </div>
 
 <!-- Circuit & School Selection -->
 <section class="mb-10">
 <div class="flex items-center gap-3 mb-6">
-<div class="w-12 h-12 bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl flex items-center justify-center shadow-lg">
-<span class="text-white font-bold text-xl">1</span>
+<div class="w-14 h-14 bg-gradient-to-br from-blue-500 to-blue-600 rounded-2xl flex items-center justify-center shadow-xl">
+<span class="text-white font-bold text-2xl">1</span>
 </div>
-<h2 class="text-3xl font-bold text-gray-800">Select Circuit & School</h2>
+<h2 class="text-4xl font-bold text-gray-800">Select Circuit & School</h2>
 </div>
 <div class="grid md:grid-cols-2 gap-6">
 <div>
-<label class="block text-sm font-bold text-gray-700 mb-2">Circuit *</label>
-<select id="circuit" required class="w-full px-4 py-3 border-2 border-gray-300 rounded-xl input-focus focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white">
+<label class="block text-sm font-bold text-gray-700 mb-3">Circuit *</label>
+<select id="circuit" required class="w-full px-5 py-4 border-2 border-gray-300 rounded-2xl input-focus focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white text-lg">
 <option value="">Select Circuit</option>
 <option value="Achiase">Achiase</option>
 <option value="Barniekrom">Barniekrom</option>
@@ -87,16 +115,16 @@ body {
 </select>
 </div>
 <div>
-<label class="block text-sm font-bold text-gray-700 mb-2">School Name *</label>
-<select id="schoolName" required disabled class="w-full px-4 py-3 border-2 border-gray-300 rounded-xl input-focus focus:ring-2 focus:ring-blue-500 focus:border-transparent disabled:bg-gray-100 disabled:cursor-not-allowed">
+<label class="block text-sm font-bold text-gray-700 mb-3">School Name *</label>
+<select id="schoolName" required disabled class="w-full px-5 py-4 border-2 border-gray-300 rounded-2xl input-focus focus:ring-2 focus:ring-blue-500 focus:border-transparent disabled:bg-gray-100 disabled:cursor-not-allowed text-lg">
 <option value="">Select Circuit First</option>
 </select>
 </div>
 </div>
 <div class="mt-6">
-<button id="loadTeachersBtn" disabled class="px-8 py-3 bg-gradient-to-r from-blue-600 to-purple-600 text-white font-bold rounded-xl hover:from-blue-700 hover:to-purple-700 transition-all disabled:opacity-50 disabled:cursor-not-allowed shadow-lg">
-<span class="flex items-center gap-2">
-<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+<button id="loadTeachersBtn" disabled class="px-10 py-4 bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 text-white font-bold text-lg rounded-2xl hover:from-blue-700 hover:to-pink-700 transition-all disabled:opacity-50 disabled:cursor-not-allowed shadow-2xl button-glow">
+<span class="flex items-center gap-3">
+<svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"></path>
 </svg>
 Load Teachers from Database
@@ -107,28 +135,28 @@ Load Teachers from Database
 
 <!-- Loading State -->
 <div id="loadingState" class="hidden text-center py-12">
-<div class="inline-block w-16 h-16 border-4 border-blue-200 border-t-blue-600 rounded-full animate-spin mb-4"></div>
-<p class="text-gray-600 text-lg font-semibold">Loading teacher data...</p>
+<div class="inline-block w-20 h-20 border-4 border-blue-200 border-t-blue-600 rounded-full animate-spin mb-4"></div>
+<p class="text-gray-600 text-xl font-semibold">Loading teacher data...</p>
 </div>
 
 <!-- Teachers Container -->
 <div id="teachersContainer" class="hidden">
 <div class="flex items-center justify-between mb-6 flex-wrap gap-4">
 <div class="flex items-center gap-3">
-<div class="w-12 h-12 bg-gradient-to-br from-green-500 to-green-600 rounded-xl flex items-center justify-center shadow-lg">
-<span class="text-white font-bold text-xl">2</span>
+<div class="w-14 h-14 bg-gradient-to-br from-green-500 to-green-600 rounded-2xl flex items-center justify-center shadow-xl">
+<span class="text-white font-bold text-2xl">2</span>
 </div>
-<h2 class="text-3xl font-bold text-gray-800">Update Staff Records</h2>
+<h2 class="text-4xl font-bold text-gray-800">Update Staff Records</h2>
 </div>
 <div class="flex items-center gap-4">
 <!-- Progress Counter -->
-<div class="bg-gradient-to-br from-blue-500 to-purple-600 px-6 py-3 rounded-xl shadow-lg">
+<div class="bg-gradient-to-br from-blue-500 to-purple-600 px-8 py-4 rounded-2xl shadow-2xl">
 <div class="text-white text-center">
-<div class="text-2xl font-bold" id="confirmedCount">0</div>
-<div class="text-xs font-semibold opacity-90">Confirmed</div>
+<div class="text-3xl font-bold" id="confirmedCount">0</div>
+<div class="text-sm font-semibold opacity-90">Confirmed</div>
 </div>
 </div>
-<button id="addTeacherBtn" class="px-6 py-2 bg-gradient-to-r from-green-500 to-emerald-600 text-white font-bold rounded-lg hover:from-green-600 hover:to-emerald-700 transition-all shadow-md">
+<button id="addTeacherBtn" class="px-8 py-3 bg-gradient-to-r from-green-500 to-emerald-600 text-white font-bold rounded-2xl hover:from-green-600 hover:to-emerald-700 transition-all shadow-xl button-glow">
 <span class="flex items-center gap-2">
 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
@@ -140,7 +168,7 @@ Add New Teacher
 </div>
 
 <!-- Expected Total Input -->
-<div class="mb-6 p-6 bg-gradient-to-br from-yellow-50 to-orange-50 border-2 border-yellow-300 rounded-xl">
+<div class="mb-6 p-6 bg-gradient-to-br from-yellow-50 to-orange-50 border-2 border-yellow-300 rounded-2xl shadow-lg">
 <label class="block text-sm font-bold text-gray-800 mb-2 flex items-center gap-2">
 <svg class="w-5 h-5 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path>
@@ -148,7 +176,7 @@ Add New Teacher
 Expected Total Number of Teachers Trained *
 </label>
 <input type="number" id="expectedTotal" min="1" placeholder="Enter total number of teachers expected" 
-class="w-full md:w-64 px-4 py-3 border-2 border-orange-300 rounded-lg input-focus focus:ring-2 focus:ring-orange-500 focus:border-transparent bg-white font-bold text-lg" required>
+class="w-full md:w-64 px-4 py-3 border-2 border-orange-300 rounded-xl input-focus focus:ring-2 focus:ring-orange-500 focus:border-transparent bg-white font-bold text-lg" required>
 <p class="text-xs text-gray-600 mt-2">This will be validated against confirmed teachers before submission</p>
 </div>
 
@@ -156,9 +184,9 @@ class="w-full md:w-64 px-4 py-3 border-2 border-orange-300 rounded-lg input-focu
 
 <!-- Submit Button -->
 <div class="mt-10 pt-8 border-t-2 border-gray-200">
-<button id="submitAttendanceBtn" class="w-full py-5 bg-gradient-to-r from-pink-600 to-purple-600 text-white font-bold text-lg rounded-2xl hover:from-pink-700 hover:to-purple-700 transition-all shadow-2xl">
+<button id="submitAttendanceBtn" class="w-full py-6 bg-gradient-to-r from-pink-600 via-purple-600 to-blue-600 text-white font-bold text-xl rounded-3xl hover:from-pink-700 hover:to-blue-700 transition-all shadow-2xl button-glow">
 <span class="flex items-center justify-center gap-3">
-<svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+<svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
 </svg>
 Submit Staff Records
@@ -173,9 +201,9 @@ Submit Staff Records
 <p class="text-sm opacity-90">© 2025 Ghana Education Service - 2025/2026 Term 2 Data Records</p>
 </div>
 
-<!-- ADD THIS NEW SIGNATURE SECTION -->
+<!-- Signature Section -->
 <div class="mt-6 mb-8">
-<div class="glass-effect rounded-2xl shadow-xl p-6 md:p-8 max-w-4xl mx-auto">
+<div class="glass-effect rounded-3xl shadow-xl p-6 md:p-8 max-w-4xl mx-auto border-2 border-white/50">
 <!-- Header -->
 <div class="text-center mb-6 pb-4 border-b-2 border-gray-200">
 <div class="inline-flex items-center gap-2 mb-2">
@@ -193,7 +221,7 @@ Statistics and Planning Unit
 <!-- Team Members Grid -->
 <div class="grid md:grid-cols-2 gap-4">
 <!-- Member 1 - HOD -->
-<div class="bg-gradient-to-br from-blue-50 to-indigo-50 p-4 rounded-xl border-2 border-blue-200 hover:shadow-md transition-all">
+<div class="bg-gradient-to-br from-blue-50 to-indigo-50 p-5 rounded-2xl border-2 border-blue-200 hover:shadow-lg transition-all card-hover">
 <div class="flex items-center gap-3">
 <div class="w-12 h-12 bg-gradient-to-br from-blue-600 to-blue-700 rounded-full flex items-center justify-center flex-shrink-0">
 <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -208,7 +236,7 @@ Statistics and Planning Unit
 </div>
 
 <!-- Member 2 - Statistics -->
-<div class="bg-gradient-to-br from-purple-50 to-pink-50 p-4 rounded-xl border-2 border-purple-200 hover:shadow-md transition-all">
+<div class="bg-gradient-to-br from-purple-50 to-pink-50 p-5 rounded-2xl border-2 border-purple-200 hover:shadow-lg transition-all card-hover">
 <div class="flex items-center gap-3">
 <div class="w-12 h-12 bg-gradient-to-br from-purple-600 to-purple-700 rounded-full flex items-center justify-center flex-shrink-0">
 <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -223,7 +251,7 @@ Statistics and Planning Unit
 </div>
 
 <!-- Member 3 - Research -->
-<div class="bg-gradient-to-br from-green-50 to-emerald-50 p-4 rounded-xl border-2 border-green-200 hover:shadow-md transition-all">
+<div class="bg-gradient-to-br from-green-50 to-emerald-50 p-5 rounded-2xl border-2 border-green-200 hover:shadow-lg transition-all card-hover">
 <div class="flex items-center gap-3">
 <div class="w-12 h-12 bg-gradient-to-br from-green-600 to-green-700 rounded-full flex items-center justify-center flex-shrink-0">
 <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -238,7 +266,7 @@ Statistics and Planning Unit
 </div>
 
 <!-- Member 4 - Planning -->
-<div class="bg-gradient-to-br from-orange-50 to-amber-50 p-4 rounded-xl border-2 border-orange-200 hover:shadow-md transition-all">
+<div class="bg-gradient-to-br from-orange-50 to-amber-50 p-5 rounded-2xl border-2 border-orange-200 hover:shadow-lg transition-all card-hover">
 <div class="flex items-center gap-3">
 <div class="w-12 h-12 bg-gradient-to-br from-orange-600 to-orange-700 rounded-full flex items-center justify-center flex-shrink-0">
 <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -383,6 +411,9 @@ document.getElementById('addTeacherBtn').addEventListener('click', function() {
 function renderTeachers() {
     const container = document.getElementById('teachersList');
     container.innerHTML = '';
+    
+    const confirmedCount = teachersData.filter(t => t.confirmed).length;
+    document.getElementById('confirmedCount').textContent = confirmedCount;
 
     teachersData.forEach((teacher, index) => {
         const card = createTeacherCard(teacher, index);
@@ -392,12 +423,12 @@ function renderTeachers() {
 
 function createTeacherCard(teacher, index) {
     const div = document.createElement('div');
-    div.className = `p-6 border-2 rounded-2xl card-hover ${teacher.confirmed ? 'bg-green-50 border-green-400' : 'bg-white border-gray-300'}`;
+    div.className = `p-6 border-2 rounded-2xl card-hover ${teacher.confirmed ? 'bg-gradient-to-br from-green-50 to-emerald-50 border-green-400' : 'bg-white border-gray-300'}`;
     
     div.innerHTML = `
-      <div class="flex items-start mb-4">
+      <div class="flex items-start justify-between mb-4">
             <div class="flex items-center gap-3">
-                <div class="w-10 h-10 ${teacher.isNew ? 'bg-blue-500' : 'bg-purple-500'} rounded-lg flex items-center justify-center text-white font-bold">
+                <div class="w-12 h-12 ${teacher.isNew ? 'bg-gradient-to-br from-blue-500 to-blue-600' : 'bg-gradient-to-br from-purple-500 to-purple-600'} rounded-xl flex items-center justify-center text-white font-bold shadow-lg">
                     ${index + 1}
                 </div>
                 <div>
@@ -407,7 +438,6 @@ function createTeacherCard(teacher, index) {
                     ${teacher.confirmed ? '<span class="text-green-600 text-sm font-semibold">✓ Confirmed</span>' : '<span class="text-orange-600 text-sm font-semibold">⚠ Not Confirmed</span>'}
                 </div>
             </div>
-           
         </div>
 
    <div class="grid md:grid-cols-2 gap-4 mb-4">
@@ -486,12 +516,13 @@ function createTeacherCard(teacher, index) {
         ` : ''}`
     }
 </div>
+</div>
 
       <div class="flex gap-3">
-    <button onclick="confirmTeacher(${index})" class="flex-1 py-2 ${teacher.confirmed ? 'bg-green-600' : 'bg-blue-600'} hover:bg-opacity-90 text-white font-bold rounded-lg transition-all">
+    <button onclick="confirmTeacher(${index})" class="flex-1 py-3 ${teacher.confirmed ? 'bg-gradient-to-r from-green-600 to-green-700' : 'bg-gradient-to-r from-blue-600 to-blue-700'} hover:opacity-90 text-white font-bold rounded-xl transition-all shadow-lg">
         ${teacher.confirmed ? '✓ Confirmed' : 'Confirm Teacher'}
     </button>
-    <button onclick="removeTeacher(${index})" class="px-4 py-2 bg-red-500 hover:bg-red-600 text-white font-bold rounded-lg transition-all flex items-center gap-2">
+    <button onclick="removeTeacher(${index})" class="px-4 py-3 bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 text-white font-bold rounded-xl transition-all flex items-center gap-2 shadow-lg">
         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
         </svg>
@@ -509,12 +540,10 @@ function handleTeachingClassCheckbox(index, className, isChecked) {
     }
     
     if (isChecked) {
-        // Add if not already present
         if (!teachersData[index].teachingClasses.includes(className)) {
             teachersData[index].teachingClasses.push(className);
         }
     } else {
-        // Remove from array
         teachersData[index].teachingClasses = teachersData[index].teachingClasses.filter(c => c !== className);
     }
     
@@ -533,12 +562,14 @@ function updateTeacher(index, field, value) {
     teachersData[index].confirmed = false;
     renderTeachers();
 }
+
 function handleTeachingLevelChange(index, value) {
     teachersData[index].teachingLevel = value;
     teachersData[index].teachingClasses = [];
     teachersData[index].confirmed = false;
     renderTeachers();
 }
+
 function confirmTeacher(index) {
     const teacher = teachersData[index];
     
@@ -594,7 +625,7 @@ if (confirmedTeachers.length !== expectedTotal) {
     }
 
     this.disabled = true;
-    this.innerHTML = '<span class="flex items-center justify-center gap-3"><div class="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>Submitting...</span>';
+    this.innerHTML = '<span class="flex items-center justify-center gap-3"><div class="w-6 h-6 border-2 border-white border-t-transparent rounded-full animate-spin"></div>Submitting...</span>';
 
    const attendanceData = confirmedTeachers.map(teacher => ({
     region: 'ASHANTI',
@@ -609,6 +640,7 @@ if (confirmedTeachers.length !== expectedTotal) {
     teachingLevel: teacher.teachingLevel || '',
     teachingClasses: (teacher.teachingClasses || []).join(', ')
 }));
+
     try {
         const response = await fetch(SCRIPT_URL + '?action=submitAttendance', {
             method: 'POST',
@@ -625,7 +657,7 @@ if (confirmedTeachers.length !== expectedTotal) {
         showStatus('Error submitting Records. Please try again.', false);
     } finally {
         this.disabled = false;
-        this.innerHTML = '<span class="flex items-center justify-center gap-3"><svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>Submit Staff Records</span>';
+        this.innerHTML = '<span class="flex items-center justify-center gap-3"><svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>Submit Staff Records</span>';
     }
 });
 
@@ -634,12 +666,12 @@ function showStatus(message, isSuccess) {
     const statusIcon = document.getElementById('statusIcon');
     const statusText = document.getElementById('statusText');
 
-    statusDiv.className = `mb-6 p-4 rounded-xl flex items-start gap-3 ${isSuccess ? 'bg-green-50 border-2 border-green-300' : 'bg-orange-50 border-2 border-orange-300'}`;
+    statusDiv.className = `mb-6 p-5 rounded-2xl flex items-start gap-3 border-2 ${isSuccess ? 'bg-gradient-to-br from-green-50 to-emerald-50 border-green-300' : 'bg-gradient-to-br from-orange-50 to-red-50 border-orange-300'}`;
     statusIcon.innerHTML = isSuccess 
         ? '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>'
         : '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>';
-    statusIcon.className = `w-6 h-6 mt-0.5 flex-shrink-0 ${isSuccess ? 'text-green-600' : 'text-orange-600'}`;
-    statusText.className = `font-medium ${isSuccess ? 'text-green-800' : 'text-orange-800'}`;
+    statusIcon.className = `w-7 h-7 mt-0.5 flex-shrink-0 ${isSuccess ? 'text-green-600' : 'text-orange-600'}`;
+    statusText.className = `font-semibold text-lg ${isSuccess ? 'text-green-800' : 'text-orange-800'}`;
     statusText.textContent = message;
 
     statusDiv.classList.remove('hidden');
@@ -648,6 +680,3 @@ function showStatus(message, isSuccess) {
 </script>
 </body>
 </html>
-
-
-
