@@ -443,7 +443,7 @@ function createTeacherCard(teacher, index) {
             ).join('')}
         </select>
     </div>
-   <div class="md:col-span-2">
+ <div class="md:col-span-2">
     <label class="block text-xs font-bold text-gray-600 mb-2">
         Current Teaching Classes/Subjects *
         <span class="block text-xs text-gray-500 mt-1">Select all that apply</span>
@@ -451,19 +451,21 @@ function createTeacherCard(teacher, index) {
     ${!teacher.teachingLevel ? 
         '<p class="text-sm text-gray-500 italic p-4 bg-gray-50 rounded-lg border border-gray-200">Please select a Teaching Level first</p>' 
         : 
-        `<div class="flex flex-col gap-2 p-4 bg-gray-50 rounded-lg border border-gray-200 max-h-64 overflow-y-auto">
-            ${teachingLevelClassMap[teacher.teachingLevel].map(cls => `
-                <label class="flex items-start gap-2 p-2 hover:bg-white rounded cursor-pointer transition-colors">
-                    <input 
-                        type="checkbox" 
-                        value="${cls}" 
-                        ${teacher.teachingClasses && teacher.teachingClasses.includes(cls) ? 'checked' : ''}
-                        onchange="handleTeachingClassCheckbox(${index}, '${cls.replace(/'/g, "\\'")}', this.checked)"
-                        class="mt-0.5 w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
-                    >
-                    <span class="text-sm text-gray-700 leading-tight">${cls}</span>
-                </label>
-            `).join('')}
+        `<div class="p-4 bg-gray-50 rounded-lg border border-gray-200 max-h-64 overflow-y-auto">
+            <div class="space-y-2">
+                ${teachingLevelClassMap[teacher.teachingLevel].map(cls => `
+                    <label class="flex items-start gap-2 p-2 hover:bg-white rounded cursor-pointer transition-colors block">
+                        <input 
+                            type="checkbox" 
+                            value="${cls}" 
+                            ${teacher.teachingClasses && teacher.teachingClasses.includes(cls) ? 'checked' : ''}
+                            onchange="handleTeachingClassCheckbox(${index}, '${cls.replace(/'/g, "\\'")}', this.checked)"
+                            class="mt-0.5 w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+                        >
+                        <span class="text-sm text-gray-700 leading-tight">${cls}</span>
+                    </label>
+                `).join('')}
+            </div>
         </div>
         ${teacher.teachingClasses && teacher.teachingClasses.length > 0 ? `
             <div class="mt-3 p-3 bg-blue-50 rounded-lg border border-blue-200">
@@ -646,5 +648,6 @@ function showStatus(message, isSuccess) {
 </script>
 </body>
 </html>
+
 
 
