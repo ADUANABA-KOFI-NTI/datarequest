@@ -161,7 +161,7 @@ class="w-full md:w-64 px-4 py-3 border-2 border-orange-300 rounded-lg input-focu
 <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
 </svg>
-Submit Workshop Attendance
+Submit Staff Records
 </span>
 </button>
 </div>
@@ -525,7 +525,7 @@ if (confirmedTeachers.length !== expectedTotal) {
         showStatus('Error submitting attendance. Please try again.', false);
     } finally {
         this.disabled = false;
-        this.innerHTML = '<span class="flex items-center justify-center gap-3"><svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>Submit Workshop Attendance</span>';
+        this.innerHTML = '<span class="flex items-center justify-center gap-3"><svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>Submit Staff Records</span>';
     }
 });
 
@@ -548,4 +548,5 @@ function showStatus(message, isSuccess) {
 </script>
 </body>
 </html>
+
 
