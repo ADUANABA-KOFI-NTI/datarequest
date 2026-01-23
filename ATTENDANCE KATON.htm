@@ -1,0 +1,550 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Phase Two Katon Workshop - Attendance</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<style>
+body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+}
+.gradient-bg {
+    background: linear-gradient(135deg, #1e3a8a 0%, #7c3aed 50%, #db2777 100%);
+}
+.glass-effect {
+    background: rgba(255, 255, 255, 0.97);
+    backdrop-filter: blur(15px);
+}
+.card-hover {
+    transition: all 0.3s ease;
+}
+.card-hover:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.15);
+}
+.input-focus {
+    transition: all 0.3s ease;
+}
+.input-focus:focus {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+}
+@keyframes pulse-slow {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.6; }
+}
+.pulse-slow {
+    animation: pulse-slow 2s ease-in-out infinite;
+}
+</style>
+</head>
+<body class="min-h-screen gradient-bg p-4">
+<div class="max-w-7xl mx-auto py-8">
+<!-- Header -->
+<div class="text-center mb-8">
+<div class="inline-block p-5 bg-white rounded-2xl shadow-2xl mb-6">
+<svg class="w-16 h-16 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"></path>
+</svg>
+</div>
+<h1 class="text-5xl font-bold text-white mb-3 drop-shadow-lg">Phase Two Katon Workshop</h1>
+<p class="text-blue-100 text-xl font-semibold">Attendance Registration</p>
+<p class="text-blue-200 text-sm mt-2">Ahafo Ano South West Education Directorate</p>
+<p class="text-blue-300 text-sm">Ghana Education Service - Ashanti Region</p>
+</div>
+
+<!-- Main Form Card -->
+<div class="glass-effect rounded-3xl shadow-2xl p-8 md:p-12 mb-6">
+<!-- Status Message -->
+<div id="statusMessage" class="hidden mb-6 p-4 rounded-xl flex items-start gap-3">
+<svg id="statusIcon" class="w-6 h-6 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"></svg>
+<span id="statusText" class="font-medium"></span>
+</div>
+
+<!-- Circuit & School Selection -->
+<section class="mb-10">
+<div class="flex items-center gap-3 mb-6">
+<div class="w-12 h-12 bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl flex items-center justify-center shadow-lg">
+<span class="text-white font-bold text-xl">1</span>
+</div>
+<h2 class="text-3xl font-bold text-gray-800">Select Circuit & School</h2>
+</div>
+<div class="grid md:grid-cols-2 gap-6">
+<div>
+<label class="block text-sm font-bold text-gray-700 mb-2">Circuit *</label>
+<select id="circuit" required class="w-full px-4 py-3 border-2 border-gray-300 rounded-xl input-focus focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white">
+<option value="">Select Circuit</option>
+<option value="Achiase">Achiase</option>
+<option value="Barniekrom">Barniekrom</option>
+<option value="Bonkwaso">Bonkwaso</option>
+<option value="Hwibaa">Hwibaa</option>
+<option value="Kunsu">Kunsu</option>
+<option value="Kunsu_Camp">Kunsu Camp</option>
+<option value="Mankranso">Mankranso</option>
+<option value="Mpasaso">Mpasaso</option>
+<option value="Wioso">Wioso</option>
+</select>
+</div>
+<div>
+<label class="block text-sm font-bold text-gray-700 mb-2">School Name *</label>
+<select id="schoolName" required disabled class="w-full px-4 py-3 border-2 border-gray-300 rounded-xl input-focus focus:ring-2 focus:ring-blue-500 focus:border-transparent disabled:bg-gray-100 disabled:cursor-not-allowed">
+<option value="">Select Circuit First</option>
+</select>
+</div>
+</div>
+<div class="mt-6">
+<button id="loadTeachersBtn" disabled class="px-8 py-3 bg-gradient-to-r from-blue-600 to-purple-600 text-white font-bold rounded-xl hover:from-blue-700 hover:to-purple-700 transition-all disabled:opacity-50 disabled:cursor-not-allowed shadow-lg">
+<span class="flex items-center gap-2">
+<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"></path>
+</svg>
+Load Teachers from Database
+</span>
+</button>
+</div>
+</section>
+
+<!-- Loading State -->
+<div id="loadingState" class="hidden text-center py-12">
+<div class="inline-block w-16 h-16 border-4 border-blue-200 border-t-blue-600 rounded-full animate-spin mb-4"></div>
+<p class="text-gray-600 text-lg font-semibold">Loading teacher data...</p>
+</div>
+
+<!-- Teachers Container -->
+<div id="teachersContainer" class="hidden">
+<div class="flex items-center justify-between mb-6 flex-wrap gap-4">
+<div class="flex items-center gap-3">
+<div class="w-12 h-12 bg-gradient-to-br from-green-500 to-green-600 rounded-xl flex items-center justify-center shadow-lg">
+<span class="text-white font-bold text-xl">2</span>
+</div>
+<h2 class="text-3xl font-bold text-gray-800">Workshop Participants</h2>
+</div>
+<div class="flex items-center gap-4">
+<!-- Progress Counter -->
+<div class="bg-gradient-to-br from-blue-500 to-purple-600 px-6 py-3 rounded-xl shadow-lg">
+<div class="text-white text-center">
+<div class="text-2xl font-bold" id="confirmedCount">0</div>
+<div class="text-xs font-semibold opacity-90">Confirmed</div>
+</div>
+</div>
+<button id="addTeacherBtn" class="px-6 py-2 bg-gradient-to-r from-green-500 to-emerald-600 text-white font-bold rounded-lg hover:from-green-600 hover:to-emerald-700 transition-all shadow-md">
+<span class="flex items-center gap-2">
+<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
+</svg>
+Add New Teacher
+</span>
+</button>
+</div>
+</div>
+
+<!-- Expected Total Input -->
+<div class="mb-6 p-6 bg-gradient-to-br from-yellow-50 to-orange-50 border-2 border-yellow-300 rounded-xl">
+<label class="block text-sm font-bold text-gray-800 mb-2 flex items-center gap-2">
+<svg class="w-5 h-5 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path>
+</svg>
+Expected Total Number of Teachers Trained *
+</label>
+<input type="number" id="expectedTotal" min="1" placeholder="Enter total number of teachers expected" 
+class="w-full md:w-64 px-4 py-3 border-2 border-orange-300 rounded-lg input-focus focus:ring-2 focus:ring-orange-500 focus:border-transparent bg-white font-bold text-lg" required>
+<p class="text-xs text-gray-600 mt-2">This will be validated against confirmed teachers before submission</p>
+</div>
+
+<div id="teachersList" class="space-y-6 mt-6"></div>
+
+<!-- Submit Button -->
+<div class="mt-10 pt-8 border-t-2 border-gray-200">
+<button id="submitAttendanceBtn" class="w-full py-5 bg-gradient-to-r from-pink-600 to-purple-600 text-white font-bold text-lg rounded-2xl hover:from-pink-700 hover:to-purple-700 transition-all shadow-2xl">
+<span class="flex items-center justify-center gap-3">
+<svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+</svg>
+Submit Workshop Attendance
+</span>
+</button>
+</div>
+</div>
+</div>
+
+<!-- Footer -->
+<div class="text-center mt-8 text-white">
+<p class="text-sm opacity-90">© 2025 Ghana Education Service - Phase Two Katon Workshop</p>
+</div>
+
+<!-- ADD THIS NEW SIGNATURE SECTION -->
+<div class="mt-6 mb-8">
+<div class="glass-effect rounded-2xl shadow-xl p-6 md:p-8 max-w-4xl mx-auto">
+<!-- Header -->
+<div class="text-center mb-6 pb-4 border-b-2 border-gray-200">
+<div class="inline-flex items-center gap-2 mb-2">
+<svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+</svg>
+<p class="text-lg font-bold text-gray-800">Designed by</p>
+</div>
+<h3 class="text-2xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-purple-600">
+Statistics and Planning Unit
+</h3>
+<p class="text-sm text-gray-600 mt-1">Ahafo Ano South West Education Directorate</p>
+</div>
+
+<!-- Team Members Grid -->
+<div class="grid md:grid-cols-2 gap-4">
+<!-- Member 1 - HOD -->
+<div class="bg-gradient-to-br from-blue-50 to-indigo-50 p-4 rounded-xl border-2 border-blue-200 hover:shadow-md transition-all">
+<div class="flex items-center gap-3">
+<div class="w-12 h-12 bg-gradient-to-br from-blue-600 to-blue-700 rounded-full flex items-center justify-center flex-shrink-0">
+<svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
+</svg>
+</div>
+<div>
+<p class="font-bold text-gray-800 text-sm">Kwame Agyekum Agyapong</p>
+<p class="text-xs text-blue-700 font-semibold">Head of Department</p>
+</div>
+</div>
+</div>
+
+<!-- Member 2 - Statistics -->
+<div class="bg-gradient-to-br from-purple-50 to-pink-50 p-4 rounded-xl border-2 border-purple-200 hover:shadow-md transition-all">
+<div class="flex items-center gap-3">
+<div class="w-12 h-12 bg-gradient-to-br from-purple-600 to-purple-700 rounded-full flex items-center justify-center flex-shrink-0">
+<svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
+</svg>
+</div>
+<div>
+<p class="font-bold text-gray-800 text-sm">Aduanaba Kofi Nti</p>
+<p class="text-xs text-purple-700 font-semibold">Statistics Officer</p>
+</div>
+</div>
+</div>
+
+<!-- Member 3 - Research -->
+<div class="bg-gradient-to-br from-green-50 to-emerald-50 p-4 rounded-xl border-2 border-green-200 hover:shadow-md transition-all">
+<div class="flex items-center gap-3">
+<div class="w-12 h-12 bg-gradient-to-br from-green-600 to-green-700 rounded-full flex items-center justify-center flex-shrink-0">
+<svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+</svg>
+</div>
+<div>
+<p class="font-bold text-gray-800 text-sm">Sarfo Rachel</p>
+<p class="text-xs text-green-700 font-semibold">Research Officer</p>
+</div>
+</div>
+</div>
+
+<!-- Member 4 - Planning -->
+<div class="bg-gradient-to-br from-orange-50 to-amber-50 p-4 rounded-xl border-2 border-orange-200 hover:shadow-md transition-all">
+<div class="flex items-center gap-3">
+<div class="w-12 h-12 bg-gradient-to-br from-orange-600 to-orange-700 rounded-full flex items-center justify-center flex-shrink-0">
+<svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path>
+</svg>
+</div>
+<div>
+<p class="font-bold text-gray-800 text-sm">Kwadwo Korankye</p>
+<p class="text-xs text-orange-700 font-semibold">Planning Officer</p>
+</div>
+</div>
+</div>
+</div>
+
+<!-- Bottom Note -->
+<div class="mt-6 pt-4 border-t border-gray-200 text-center">
+<p class="text-xs text-gray-500 italic">Committed to Excellence in Educational Data Management</p>
+</div>
+</div>
+</div>
+
+</div>
+
+<script>
+const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxcTkeai4GUiYT3Exz9yqyTndOwyYIuUnDWdYeNdKtjM4Epo3R5P48L_zjYA90UaXDy/exec';
+
+const circuitSchoolMap = {
+    "Achiase": ["ACHIASE D/A JHS", "ACHIASE D/A PRIAMRY", "ADIEMBRA D/A BASIC", "ANGO D/A BASIC", "ASUOKOR D/A JHS", "ASUOKOR D/A PRIMARY", "DOTIEM-MPASASO D/A JHS", "DOTIEM-MPASASO D/A PRIMARY", "MANHYIA D/A BASIC"],
+    "Barniekrom": ["BARNIEKROM D/A JHS", "BARNIEKROM D/A PRIMARY", "BARNIEKROM ISLAMIC BASIC", "DUNYAN NKWANTA D/A JHS", "DUNYAN NKWANTA D/A PRIMARY SCHOOL", "MMOROBEM D/A PRIMARY", "NYAMEBEKYERE III D/A BASIC", "NYINANUFU D/A JHS", "NYINANUFU D/A PRIMARY SCHOOL", "OHIAPAE D/A BASIC"],
+    "Bonkwaso": ["ABAASUA D/A BASIC", "AFRESENI D/A JHS", "AFRESENI D/A PRIMARY", "AFRESENI-CAMP D/A PRIMARY", "ASEKANTIA D/A PRIMARY", "BOATENGKROM D/A JHS", "BOATENGKROM ENG/ARABIC PRIMARY", "BONKWASO 1 D/A PRIMARY", "BONKWASO I D/A JHS", "BONKWASO I ISLAMIC BASIC", "BONKWASO II DA BASIC", "KRAMOKROM ENG/ARABIC D/A PRIMARY", "NKYENSEDANHO D/A BASIC"],
+    "Hwibaa": ["ABODEASE D/A BASIC", "ANITEMFE D/A BASIC", "ASUKESE ST. PETER'S D/A BASIC", "HWIBAA D/A JHS", "HWIBAA ISLAMIC BASIC", "HWIBAA R/C PRIMARY", "PEWODIE D/A BASIC"],
+    "Kunsu": ["KUNSU AL-AZIZ ISLAMIC BASIC", "KUNSU D/A JHS 'A'", "KUNSU D/A JHS 'B'", "KUNSU D/A PRIMARY 'A'", "KUNSU D/A PRIMARY 'B'", "KUNSU R/C BASIC SCHOOL", "KUNSU SDA PRIMARY", "NYAMEADOM D/A JHS", "NYAMEADOM D/A PRIMARY SCHOOL"],
+    "Kunsu_Camp": ["AGYEIBI D/A PRIMARY", "ASIBEY-NKWANTA D/A JHS", "ASIBEY-NKWANTA D/A PRIMARY", "BONKRON D/A BASIC", "GYAEKONTABUO ISLAMIC PRI.", "KOKOTEASUA D/A BASIC", "KUNSU-CAMP D/A JHS", "KUNSU-CAMP D/A PRIMARY", "KUNSU-DOTIEM D/A JHS", "KUNSU-DOTIEM D/A PRIMARY", "ODOYEFE D/A PRIMARY"],
+    "Mankranso": ["AHAFO ANO SOUTH-WEST DEO", "BEPOSO D/A JHS", "BEPOSO D/A PRIMARY SCHOOL", "MANKRANSO D/A JHS 'A'", "MANKRANSO D/A JHS 'B' SCHOOL", "MANKRANSO D/A PRIMARY 'A'", "MANKRANSO D/A PRIMARY 'B' SCHOOL", "MANKRANSO HOLY PROPHET ISLAMIC BASIC", "MANKRANSO METHODIST JHS", "MANKRANSO METHODIST PRIMARY"],
+    "Mpasaso": ["ADADEKROM D/A JHS", "ADADEKROM D/A PRIMARY", "BONSUKROM D/A JHS", "BONSUKROM D/A PRIMARY SCHOOL", "MPASASO I D/A PRIMARY", "MPASASO II D/A JHS", "MPASASO II D/A PRIMARY", "MPASASO II ST. PETERS R/C JHS", "MPASASO II ST. PETERS R/C PRIMARY", "MPASASO NURIYA ISLAMIC BASIC", "MPASASO TABIRI GYANSA D/A JHS", "NYAMEBEKYERE II D/A PRIMARY", "OSEIKROM D/A PRIMARY"],
+    "Wioso": ["DOMIABRA D/A JHS", "DOMIABRA R/C PRIMARY 'A'", "DOMIABRA R/C PRIMARY 'B'", "DOMIABRA-NYAMEBEKYERE IV D/A PRIMARY", "WIOSO ALMA MATTER D/A PRIMARY", "WIOSO D/A JHS", "WIOSO D/A PRIMARY", "WIOSO ST. PETER'S R/C JHS", "WIOSO ST. PETER'S R/C PRIMARY SCHOOL"]
+};
+
+let teachersData = [];
+let teacherCounter = 0;
+
+document.getElementById('circuit').addEventListener('change', function() {
+    const circuit = this.value;
+    const schoolSelect = document.getElementById('schoolName');
+    const loadBtn = document.getElementById('loadTeachersBtn');
+
+    schoolSelect.innerHTML = '<option value="">Select School</option>';
+    loadBtn.disabled = true;
+
+    if (circuit && circuitSchoolMap[circuit]) {
+        schoolSelect.disabled = false;
+        circuitSchoolMap[circuit].forEach(school => {
+            const option = document.createElement('option');
+            option.value = school;
+            option.textContent = school;
+            schoolSelect.appendChild(option);
+        });
+    } else {
+        schoolSelect.disabled = true;
+    }
+
+    document.getElementById('teachersContainer').classList.add('hidden');
+    teachersData = [];
+});
+
+document.getElementById('schoolName').addEventListener('change', function() {
+    const loadBtn = document.getElementById('loadTeachersBtn');
+    loadBtn.disabled = !this.value;
+    document.getElementById('teachersContainer').classList.add('hidden');
+    teachersData = [];
+});
+
+document.getElementById('loadTeachersBtn').addEventListener('click', async function() {
+    const schoolName = document.getElementById('schoolName').value;
+    if (!schoolName) return;
+
+    document.getElementById('loadingState').classList.remove('hidden');
+    document.getElementById('teachersContainer').classList.add('hidden');
+
+    try {
+        const response = await fetch(`${SCRIPT_URL}?action=getTeachers&schoolName=${encodeURIComponent(schoolName)}`);
+        const result = await response.json();
+
+        if (result.status === 'success') {
+            teachersData = result.teachers || [];
+            teacherCounter = 0;
+            renderTeachers();
+            document.getElementById('loadingState').classList.add('hidden');
+            document.getElementById('teachersContainer').classList.remove('hidden');
+            
+            if (teachersData.length === 0) {
+                showStatus('No teachers found in database. Click "Add New Teacher" to add participants.', false);
+            } else {
+                showStatus(`Loaded ${teachersData.length} teacher(s) from database.`, true);
+            }
+        } else {
+            throw new Error(result.message || 'Failed to load teachers');
+        }
+    } catch (error) {
+        console.error('Error:', error);
+        showStatus('Error loading teachers. You can still add teachers manually.', false);
+        teachersData = [];
+        renderTeachers();
+        document.getElementById('loadingState').classList.add('hidden');
+        document.getElementById('teachersContainer').classList.remove('hidden');
+    }
+});
+
+document.getElementById('addTeacherBtn').addEventListener('click', function() {
+    const newTeacher = {
+        id: `new_${teacherCounter++}`,
+        fullName: '',
+        phoneNumber: '',
+        staffId: '',
+        ntcLicense: '',
+        email: '',
+        isNew: true,
+        confirmed: false
+    };
+    teachersData.push(newTeacher);
+    renderTeachers();
+});
+
+function renderTeachers() {
+    const container = document.getElementById('teachersList');
+    container.innerHTML = '';
+
+    teachersData.forEach((teacher, index) => {
+        const card = createTeacherCard(teacher, index);
+        container.appendChild(card);
+    });
+}
+
+function createTeacherCard(teacher, index) {
+    const div = document.createElement('div');
+    div.className = `p-6 border-2 rounded-2xl card-hover ${teacher.confirmed ? 'bg-green-50 border-green-400' : 'bg-white border-gray-300'}`;
+    
+    div.innerHTML = `
+      <div class="flex items-start mb-4">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 ${teacher.isNew ? 'bg-blue-500' : 'bg-purple-500'} rounded-lg flex items-center justify-center text-white font-bold">
+                    ${index + 1}
+                </div>
+                <div>
+                    <h3 class="font-bold text-gray-800 text-lg">
+                        ${teacher.isNew ? 'New Teacher' : (teacher.fullName || 'Teacher')}
+                    </h3>
+                    ${teacher.confirmed ? '<span class="text-green-600 text-sm font-semibold">✓ Confirmed</span>' : '<span class="text-orange-600 text-sm font-semibold">⚠ Not Confirmed</span>'}
+                </div>
+            </div>
+           
+        </div>
+
+        <div class="grid md:grid-cols-2 gap-4 mb-4">
+            <div>
+                <label class="block text-xs font-bold text-gray-600 mb-1">Full Name *</label>
+                <input type="text" value="${teacher.fullName || ''}" onchange="updateTeacher(${index}, 'fullName', this.value)" class="w-full px-3 py-2 border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent" required>
+            </div>
+            <div>
+               <label class="block text-xs font-bold text-gray-600 mb-1">
+    Phone Number (Registered Mobile Money) *
+    <span class="block text-xs font-semibold text-red-600 mt-1">⚠ Must be a Mobile Money number registered in teacher's name</span>
+</label>
+                <input type="tel" value="${teacher.phoneNumber || ''}" onchange="updateTeacher(${index}, 'phoneNumber', this.value)" placeholder="e.g., 0244123456" class="w-full px-3 py-2 border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent" required>
+            </div>
+            <div>
+                <label class="block text-xs font-bold text-gray-600 mb-1">Staff ID</label>
+                <input type="text" value="${teacher.staffId || ''}" onchange="updateTeacher(${index}, 'staffId', this.value)" class="w-full px-3 py-2 border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+            </div>
+            <div>
+                <label class="block text-xs font-bold text-gray-600 mb-1">NTC License Number</label>
+                <input type="text" value="${teacher.ntcLicense || ''}" onchange="updateTeacher(${index}, 'ntcLicense', this.value)" class="w-full px-3 py-2 border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+            </div>
+            <div class="md:col-span-2">
+                <label class="block text-xs font-bold text-gray-600 mb-1">Email</label>
+                <input type="email" value="${teacher.email || ''}" onchange="updateTeacher(${index}, 'email', this.value)" class="w-full px-3 py-2 border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+            </div>
+        </div>
+
+      <div class="flex gap-3">
+    <button onclick="confirmTeacher(${index})" class="flex-1 py-2 ${teacher.confirmed ? 'bg-green-600' : 'bg-blue-600'} hover:bg-opacity-90 text-white font-bold rounded-lg transition-all">
+        ${teacher.confirmed ? '✓ Confirmed' : 'Confirm Teacher'}
+    </button>
+    <button onclick="removeTeacher(${index})" class="px-4 py-2 bg-red-500 hover:bg-red-600 text-white font-bold rounded-lg transition-all flex items-center gap-2">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+        </svg>
+        Delete
+    </button>
+</div>
+    `;
+    
+    return div;
+}
+
+function updateTeacher(index, field, value) {
+    teachersData[index][field] = value;
+    teachersData[index].confirmed = false;
+    renderTeachers();
+}
+
+function confirmTeacher(index) {
+    const teacher = teachersData[index];
+    
+    if (!teacher.fullName || !teacher.phoneNumber) {
+        showStatus('Please fill in at least the Full Name and Phone Number before confirming.', false);
+        return;
+    }
+    
+    teacher.confirmed = true;
+    renderTeachers();
+    showStatus(`${teacher.fullName} confirmed successfully!`, true);
+}
+
+function removeTeacher(index) {
+    if (confirm('Are you sure you want to remove this teacher?')) {
+        teachersData.splice(index, 1);
+        renderTeachers();
+    }
+}
+
+document.getElementById('submitAttendanceBtn').addEventListener('click', async function() {
+    const circuit = document.getElementById('circuit').value;
+    const schoolName = document.getElementById('schoolName').value;
+
+    if (!circuit || !schoolName) {
+        showStatus('Please select circuit and school first.', false);
+        return;
+    }
+
+   const expectedTotal = parseInt(document.getElementById('expectedTotal').value);
+const confirmedTeachers = teachersData.filter(t => t.confirmed);
+
+if (!expectedTotal || expectedTotal < 1) {
+    showStatus('Please enter the expected total number of teachers trained.', false);
+    return;
+}
+
+if (confirmedTeachers.length === 0) {
+    showStatus('Please confirm at least one teacher before submitting.', false);
+    return;
+}
+
+if (confirmedTeachers.length !== expectedTotal) {
+    showStatus(`Mismatch! Expected ${expectedTotal} teachers but only ${confirmedTeachers.length} confirmed. Please confirm exactly ${expectedTotal} teachers or update the expected total.`, false);
+    return;
+}
+
+    const unconfirmed = teachersData.filter(t => !t.confirmed);
+    if (unconfirmed.length > 0) {
+        if (!confirm(`${unconfirmed.length} teacher(s) are not confirmed and will not be submitted. Continue?`)) {
+            return;
+        }
+    }
+
+    this.disabled = true;
+    this.innerHTML = '<span class="flex items-center justify-center gap-3"><div class="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>Submitting...</span>';
+
+    const attendanceData = confirmedTeachers.map(teacher => ({
+        region: 'ASHANTI',
+        district: 'AHAFO ANO SOUTH WEST',
+        circuit: circuit,
+        schoolName: schoolName,
+        fullName: teacher.fullName,
+        phoneNumber: teacher.phoneNumber,
+        staffId: teacher.staffId || '',
+        ntcLicense: teacher.ntcLicense || '',
+        email: teacher.email || ''
+    }));
+
+    try {
+        const response = await fetch(SCRIPT_URL + '?action=submitAttendance', {
+            method: 'POST',
+            mode: 'no-cors',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(attendanceData)
+        });
+
+        showStatus(`✓ Successfully submitted attendance for ${confirmedTeachers.length} teacher(s)!`, true);
+        setTimeout(() => location.reload(), 2000);
+
+    } catch (error) {
+        console.error('Error:', error);
+        showStatus('Error submitting attendance. Please try again.', false);
+    } finally {
+        this.disabled = false;
+        this.innerHTML = '<span class="flex items-center justify-center gap-3"><svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>Submit Workshop Attendance</span>';
+    }
+});
+
+function showStatus(message, isSuccess) {
+    const statusDiv = document.getElementById('statusMessage');
+    const statusIcon = document.getElementById('statusIcon');
+    const statusText = document.getElementById('statusText');
+
+    statusDiv.className = `mb-6 p-4 rounded-xl flex items-start gap-3 ${isSuccess ? 'bg-green-50 border-2 border-green-300' : 'bg-orange-50 border-2 border-orange-300'}`;
+    statusIcon.innerHTML = isSuccess 
+        ? '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>'
+        : '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>';
+    statusIcon.className = `w-6 h-6 mt-0.5 flex-shrink-0 ${isSuccess ? 'text-green-600' : 'text-orange-600'}`;
+    statusText.className = `font-medium ${isSuccess ? 'text-green-800' : 'text-orange-800'}`;
+    statusText.textContent = message;
+
+    statusDiv.classList.remove('hidden');
+    statusDiv.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+}
+</script>
+</body>
+</html>
