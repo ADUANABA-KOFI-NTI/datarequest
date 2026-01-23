@@ -294,130 +294,8 @@ const circuitSchoolMap = {
 };
 
 let teachersData = [];
-// Check for saved data on page load
-window.addEventListener('DOMContentLoaded', function() {
-    const savedData = loadFormData();
-    if (savedData) {
-        const restore = confirm(
-            `You have unsaved work from ${new Date(savedData.timestamp).toLocaleString()}.\n\n` +
-            `Circuit: ${savedData.circuit || 'Not selected'}\n` +
-            `School: ${savedData.schoolName || 'Not selected'}\n` +
-            `Teachers in progress: ${savedData.teachersData?.length || 0}\n\n` +
-            `Would you like to restore your previous work?`
-        );
-        
-        if (restore) {
-            restoreFormState(savedData);
-        } else {
-            clearFormData();
-        }
-    }
-});
-
-// Auto-save every 5 seconds
-setInterval(() => {
-    if (teachersData.length > 0) {
-        saveFormData();
-    }
-}, 5000);
-
-// Save before page unload
-window.addEventListener('beforeunload', function(e) {
-    if (teachersData.length > 0) {
-        saveFormData();
-        const confirmedCount = teachersData.filter(t => t.confirmed).length;
-        const totalCount = teachersData.length;
-        
-        // Only show warning if there's unsubmitted data
-        if (totalCount > 0) {
-            e.preventDefault();
-            e.returnValue = `You have ${totalCount} teacher(s) in progress (${confirmedCount} confirmed). Your work will be saved, but make sure to submit before closing.`;
-            return e.returnValue;
-        }
-    }
-});
 let teacherCounter = 0;
-// Storage key for this form
-const STORAGE_KEY = 'teacher_attendance_form_data';
 
-// Save form data to localStorage
-function saveFormData() {
-    const formData = {
-        circuit: document.getElementById('circuit').value,
-        schoolName: document.getElementById('schoolName').value,
-        expectedTotal: document.getElementById('expectedTotal').value,
-        teachersData: teachersData,
-        teacherCounter: teacherCounter,
-        timestamp: new Date().toISOString()
-    };
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(formData));
-}
-
-// Load form data from localStorage
-function loadFormData() {
-    const savedData = localStorage.getItem(STORAGE_KEY);
-    if (savedData) {
-        try {
-            const formData = JSON.parse(savedData);
-            return formData;
-        } catch (error) {
-            console.error('Error loading saved data:', error);
-            return null;
-        }
-    }
-    return null;
-}
-
-// Clear saved form data
-function clearFormData() {
-    localStorage.removeItem(STORAGE_KEY);
-}
-
-// Restore form state from saved data
-function restoreFormState(formData) {
-    if (!formData) return false;
-    
-    // Restore circuit
-    if (formData.circuit) {
-        document.getElementById('circuit').value = formData.circuit;
-        document.getElementById('circuit').dispatchEvent(new Event('change'));
-        
-        // Wait a bit for schools to load, then restore school
-        setTimeout(() => {
-            if (formData.schoolName) {
-                document.getElementById('schoolName').value = formData.schoolName;
-                document.getElementById('schoolName').dispatchEvent(new Event('change'));
-            }
-        }, 100);
-    }
-    
-    // Restore expected total
-    if (formData.expectedTotal) {
-        document.getElementById('expectedTotal').value = formData.expectedTotal;
-    }
-    
-    // Restore teachers data
-    if (formData.teachersData && formData.teachersData.length > 0) {
-        teachersData = formData.teachersData;
-        teacherCounter = formData.teacherCounter || 0;
-        
-        // Show teachers container
-        document.getElementById('teachersContainer').classList.remove('hidden');
-        renderTeachers();
-        updateConfirmedCount();
-        
-        showStatus(`Restored your previous work from ${new Date(formData.timestamp).toLocaleString()}. You have ${teachersData.length} teacher(s) in progress.`, true);
-        return true;
-    }
-    
-    return false;
-}
-
-// Update confirmed count display
-function updateConfirmedCount() {
-    const confirmedCount = teachersData.filter(t => t.confirmed).length;
-    document.getElementById('confirmedCount').textContent = confirmedCount;
-}
 document.getElementById('circuit').addEventListener('change', function() {
     const circuit = this.value;
     const schoolSelect = document.getElementById('schoolName');
@@ -510,10 +388,6 @@ function renderTeachers() {
         const card = createTeacherCard(teacher, index);
         container.appendChild(card);
     });
-    
-    // Update confirmed count and save
-    updateConfirmedCount();
-    saveFormData();
 }
 
 function createTeacherCard(teacher, index) {
@@ -656,7 +530,6 @@ function updateTeacher(index, field, value) {
     teachersData[index][field] = value;
     teachersData[index].confirmed = false;
     renderTeachers();
-    saveFormData(); // Auto-save on every update
 }
 function handleTeachingLevelChange(index, value) {
     teachersData[index].teachingLevel = value;
@@ -743,7 +616,6 @@ if (confirmedTeachers.length !== expectedTotal) {
         });
 
         showStatus(`✓ Successfully submitted STAFF RECORDS for ${confirmedTeachers.length} teacher(s)!`, true);
-         clearFormData();
         setTimeout(() => location.reload(), 2000);
 
     } catch (error) {
@@ -774,6 +646,4 @@ function showStatus(message, isSuccess) {
 </script>
 </body>
 </html>
-
-
 
