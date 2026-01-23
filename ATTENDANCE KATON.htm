@@ -443,47 +443,47 @@ function createTeacherCard(teacher, index) {
             ).join('')}
         </select>
     </div>
-    <div class="md:col-span-2">
-        <label class="block text-xs font-bold text-gray-600 mb-2">
-            Current Teaching Classes/Subjects *
-            <span class="block text-xs text-gray-500 mt-1">Select all that apply</span>
-        </label>
-        ${!teacher.teachingLevel ? 
-            '<p class="text-sm text-gray-500 italic p-4 bg-gray-50 rounded-lg border border-gray-200">Please select a Teaching Level first</p>' 
-            : 
-            `<div class="grid grid-cols-2 md:grid-cols-3 gap-3 p-4 bg-gray-50 rounded-lg border border-gray-200 max-h-64 overflow-y-auto">
-                ${teachingLevelClassMap[teacher.teachingLevel].map(cls => `
-                    <label class="flex items-start gap-2 p-2 hover:bg-white rounded cursor-pointer transition-colors">
-                        <input 
-                            type="checkbox" 
-                            value="${cls}" 
-                            ${teacher.teachingClasses && teacher.teachingClasses.includes(cls) ? 'checked' : ''}
-                            onchange="handleTeachingClassCheckbox(${index}, '${cls.replace(/'/g, "\\'")}', this.checked)"
-                            class="mt-0.5 w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
-                        >
-                        <span class="text-sm text-gray-700 leading-tight">${cls}</span>
-                    </label>
-                `).join('')}
-            </div>
-            ${teacher.teachingClasses && teacher.teachingClasses.length > 0 ? `
-                <div class="mt-3 p-3 bg-blue-50 rounded-lg border border-blue-200">
-                    <p class="text-xs font-bold text-blue-900 mb-2">Selected (${teacher.teachingClasses.length}):</p>
-                    <div class="flex flex-wrap gap-2">
-                        ${teacher.teachingClasses.map(cls => `
-                            <span class="inline-flex items-center gap-1 px-2 py-1 bg-blue-600 text-white text-xs font-semibold rounded">
-                                ${cls}
-                                <button onclick="handleRemoveTeachingClass(${index}, '${cls.replace(/'/g, "\\'")}'); event.preventDefault();" class="ml-1 hover:bg-blue-700 rounded-full p-0.5">
-                                    <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
-                                    </svg>
-                                </button>
-                            </span>
-                        `).join('')}
-                    </div>
+   <div class="md:col-span-2">
+    <label class="block text-xs font-bold text-gray-600 mb-2">
+        Current Teaching Classes/Subjects *
+        <span class="block text-xs text-gray-500 mt-1">Select all that apply</span>
+    </label>
+    ${!teacher.teachingLevel ? 
+        '<p class="text-sm text-gray-500 italic p-4 bg-gray-50 rounded-lg border border-gray-200">Please select a Teaching Level first</p>' 
+        : 
+        `<div class="flex flex-col gap-2 p-4 bg-gray-50 rounded-lg border border-gray-200 max-h-64 overflow-y-auto">
+            ${teachingLevelClassMap[teacher.teachingLevel].map(cls => `
+                <label class="flex items-start gap-2 p-2 hover:bg-white rounded cursor-pointer transition-colors">
+                    <input 
+                        type="checkbox" 
+                        value="${cls}" 
+                        ${teacher.teachingClasses && teacher.teachingClasses.includes(cls) ? 'checked' : ''}
+                        onchange="handleTeachingClassCheckbox(${index}, '${cls.replace(/'/g, "\\'")}', this.checked)"
+                        class="mt-0.5 w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+                    >
+                    <span class="text-sm text-gray-700 leading-tight">${cls}</span>
+                </label>
+            `).join('')}
+        </div>
+        ${teacher.teachingClasses && teacher.teachingClasses.length > 0 ? `
+            <div class="mt-3 p-3 bg-blue-50 rounded-lg border border-blue-200">
+                <p class="text-xs font-bold text-blue-900 mb-2">Selected (${teacher.teachingClasses.length}):</p>
+                <div class="flex flex-wrap gap-2">
+                    ${teacher.teachingClasses.map(cls => `
+                        <span class="inline-flex items-center gap-1 px-2 py-1 bg-blue-600 text-white text-xs font-semibold rounded">
+                            ${cls}
+                            <button onclick="handleRemoveTeachingClass(${index}, '${cls.replace(/'/g, "\\'")}'); event.preventDefault();" class="ml-1 hover:bg-blue-700 rounded-full p-0.5">
+                                <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                                </svg>
+                            </button>
+                        </span>
+                    `).join('')}
                 </div>
-            ` : ''}`
-        }
-    </div>
+            </div>
+        ` : ''}`
+    }
+</div>
 
       <div class="flex gap-3">
     <button onclick="confirmTeacher(${index})" class="flex-1 py-2 ${teacher.confirmed ? 'bg-green-600' : 'bg-blue-600'} hover:bg-opacity-90 text-white font-bold rounded-lg transition-all">
@@ -646,4 +646,5 @@ function showStatus(message, isSuccess) {
 </script>
 </body>
 </html>
+
 
