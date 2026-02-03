@@ -1,0 +1,2813 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>GES School Statistics Form</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --gold: #c9a227;
+    --gold-light: #e8d48b;
+    --gold-dim: rgba(201,162,39,0.12);
+    --navy: #0f1b2d;
+    --navy-mid: #1a2d45;
+    --navy-light: #243d5e;
+    --cream: #faf8f3;
+    --cream-dark: #f0ece3;
+    --text: #1e2a3a;
+    --text-muted: #6b7a8d;
+    --white: #ffffff;
+    --red: #d63946;
+    --green: #2a9d5c;
+    --blue: #2d6db3;
+    --input-bg: #fff;
+    --border: #ddd6c8;
+    --shadow: 0 2px 12px rgba(15,27,45,0.08);
+    --shadow-md: 0 6px 24px rgba(15,27,45,0.12);
+  }
+
+  * { margin:0; padding:0; box-sizing:border-box; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--cream);
+    color: var(--text);
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* ─── TOP BANNER ─── */
+  .top-banner {
+    background: linear-gradient(135deg, var(--navy) 0%, var(--navy-mid) 60%, var(--navy-light) 100%);
+    position: relative;
+    overflow: hidden;
+    padding: 36px 20px 32px;
+    text-align: center;
+  }
+  .top-banner::before {
+    content:'';
+    position:absolute; inset:0;
+    background: repeating-linear-gradient(
+      45deg,
+      transparent, transparent 40px,
+      rgba(201,162,39,0.04) 40px,
+      rgba(201,162,39,0.04) 80px
+    );
+  }
+  .top-banner::after {
+    content:'';
+    position:absolute; bottom:0; left:0; right:0; height:4px;
+    background: linear-gradient(90deg, transparent 0%, var(--gold) 30%, var(--gold) 70%, transparent 100%);
+  }
+  .banner-inner { position:relative; z-index:1; max-width:680px; margin:0 auto; }
+  .banner-district {
+    font-size:0.72rem; letter-spacing:3.5px; text-transform:uppercase;
+    color: var(--gold-light); margin-bottom:10px; font-weight:500;
+  }
+  .banner-org {
+    font-family:'Playfair Display', serif;
+    font-size:1.75rem; color:#fff; font-weight:700; line-height:1.2;
+    margin-bottom:4px;
+  }
+  .banner-unit {
+    font-size:0.78rem; color: rgba(255,255,255,0.55);
+    letter-spacing:2px; text-transform:uppercase; margin-top:6px;
+  }
+  .banner-divider {
+    width:48px; height:2px; background:var(--gold); margin:14px auto 0;
+  }
+
+  /* ─── LOGOUT BUTTON ─── */
+  .logout-btn {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    background: rgba(255,255,255,0.15);
+    backdrop-filter: blur(10px);
+    color: #fff;
+    border: 1px solid rgba(255,255,255,0.2);
+    padding: 10px 20px;
+    border-radius: 8px;
+    font-size: 0.85rem;
+    font-weight: 500;
+    cursor: pointer;
+    display: none;
+    align-items: center;
+    gap: 8px;
+    transition: all .2s;
+    z-index: 100;
+  }
+  .logout-btn:hover {
+    background: rgba(255,255,255,0.25);
+    transform: translateY(-1px);
+  }
+  .logout-btn.show { display: flex; }
+  .logout-btn svg { width: 16px; height: 16px; }
+
+  /* ─── MAIN WRAPPER ─── */
+  .main-wrap { max-width:780px; margin:0 auto; padding: 32px 18px 60px; }
+
+  /* ─── CARDS ─── */
+  .card {
+    background: var(--white);
+    border-radius:14px;
+    box-shadow: var(--shadow);
+    border: 1px solid var(--border);
+    margin-bottom:20px;
+    overflow:hidden;
+    transition: box-shadow .25s;
+  }
+  .card:hover { box-shadow: var(--shadow-md); }
+
+  /* ─── AUTH SECTION ─── */
+  #auth-section .card-body {
+    padding:40px 32px 44px;
+    text-align:center;
+  }
+  .auth-icon {
+    width:62px; height:62px; border-radius:50%;
+    background: var(--gold-dim); margin:0 auto 20px;
+    display:flex; align-items:center; justify-content:center;
+  }
+  .auth-icon svg { width:28px; height:28px; color:var(--gold); }
+  .auth-title {
+    font-family:'Playfair Display', serif;
+    font-size:1.25rem; color:var(--navy); margin-bottom:6px;
+  }
+  .auth-sub { font-size:0.82rem; color:var(--text-muted); margin-bottom:22px; }
+  .auth-input-wrap { position:relative; max-width:380px; margin:0 auto 18px; }
+  .auth-input {
+    width:100%; padding:14px 18px 14px 46px;
+    border:2px solid var(--border);
+    border-radius:10px; font-size:0.95rem;
+    font-family:inherit; background:var(--input-bg);
+    transition: border-color .2s, box-shadow .2s;
+    outline:none;
+  }
+  .auth-input:focus { border-color:var(--gold); box-shadow:0 0 0 4px var(--gold-dim); }
+  .auth-input-icon {
+    position:absolute; left:15px; top:50%; transform:translateY(-50%);
+    color:var(--text-muted);
+  }
+  .btn-verify {
+    display:inline-flex; align-items:center; gap:8px;
+    background: linear-gradient(135deg, var(--gold), #b8891f);
+    color:#fff; border:none; padding:12px 34px;
+    border-radius:10px; font-size:0.9rem; font-weight:600;
+    font-family:inherit; cursor:pointer;
+    transition: transform .15s, box-shadow .2s;
+    box-shadow: 0 3px 10px rgba(201,162,39,0.35);
+  }
+  .btn-verify:hover { transform:translateY(-1px); box-shadow:0 5px 16px rgba(201,162,39,0.4); }
+  .btn-verify:active { transform:translateY(0); }
+  .btn-verify svg { width:16px; height:16px; }
+
+  .auth-error {
+    margin-top:14px; font-size:0.82rem; color:var(--red);
+    display:none; align-items:center; gap:6px; justify-content:center;
+  }
+  .auth-error.show { display:flex; }
+
+  /* ─── USER INFO STRIP ─── */
+  #form-section { display:none; }
+  #form-section.show { display:block; animation: fadeDown .4s ease; }
+  @keyframes fadeDown {
+    from { opacity:0; transform:translateY(-14px); }
+    to   { opacity:1; transform:translateY(0); }
+  }
+  .info-strip {
+    display:grid; grid-template-columns:1fr 1fr 1fr;
+    gap:12px; padding:18px 22px;
+    background:var(--cream-dark); border-bottom:1px solid var(--border);
+  }
+  .info-item label {
+    font-size:0.68rem; text-transform:uppercase; letter-spacing:1.2px;
+    color:var(--text-muted); font-weight:600; display:block; margin-bottom:3px;
+  }
+  .info-item span {
+    font-size:0.85rem; color:var(--navy); font-weight:600;
+  }
+
+  /* ─── SECTION TOGGLES ─── */
+  .section-header {
+    display:flex; align-items:center; justify-content:space-between;
+    padding:16px 22px; cursor:pointer; user-select:none;
+    background:var(--cream-dark); border-bottom:1px solid var(--border);
+    transition: background .2s;
+  }
+  .section-header:hover { background:#ece8de; }
+  .section-header-left { display:flex; align-items:center; gap:12px; }
+  .section-icon {
+    width:36px; height:36px; border-radius:10px;
+    display:flex; align-items:center; justify-content:center;
+    font-size:1.1rem;
+  }
+  .section-icon.enrol  { background:#e8f4fd; }
+  .section-icon.staff  { background:#fef3e2; }
+  .section-icon.furn   { background:#eef6ee; }
+  .section-icon.class  { background:#f0eef8; }
+  .section-icon.accom  { background:#fff4e6; }
+  .section-icon.water  { background:#e3f2fd; }
+  .section-icon.sanit  { background:#f3e5f5; }
+  .section-icon.proj   { background:#e8f5e9; }
+  .section-icon.equip  { background:#fff3e0; }
+  .section-icon.facil  { background:#fce4ec; }
+  .section-title { font-weight:600; font-size:0.92rem; color:var(--navy); }
+  .section-count { font-size:0.72rem; color:var(--text-muted); margin-top:1px; }
+  .toggle-chevron {
+    width:22px; height:22px; color:var(--text-muted);
+    transition: transform .25s;
+  }
+  .section-header.open .toggle-chevron { transform:rotate(180deg); }
+
+  /* ─── COLLAPSIBLE BODY ─── */
+  .section-body {
+    max-height:0; overflow:hidden; transition: max-height .4s cubic-bezier(.4,0,.2,1);
+  }
+  .section-body.open { max-height:5000px; }
+  .section-body-inner { padding:18px 22px 22px; }
+
+  /* ─── LEVEL SUB-HEADERS ─── */
+  .level-label {
+    font-size:0.72rem; text-transform:uppercase; letter-spacing:1.8px;
+    color:var(--gold); font-weight:700; margin:18px 0 8px;
+    padding-bottom:4px; border-bottom:1px solid var(--gold-dim);
+  }
+  .level-label:first-child { margin-top:0; }
+
+  /* ─── INPUT GRID ─── */
+  .input-grid { display:grid; grid-template-columns:1fr 1fr 1fr; gap:10px; }
+  .input-grid.two-col { grid-template-columns:1fr 1fr; }
+
+  .input-group { display:flex; flex-direction:column; }
+  .input-group label {
+    font-size:0.72rem; color:var(--text-muted); font-weight:500;
+    margin-bottom:4px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+  }
+  .input-group input, .input-group select {
+    padding:9px 11px; border:1.5px solid var(--border);
+    border-radius:8px; font-size:0.88rem; font-family:inherit;
+    background:var(--input-bg); color:var(--navy);
+    transition: border-color .2s, box-shadow .2s;
+    outline:none; width:100%;
+  }
+  .input-group input:focus, .input-group select:focus { 
+    border-color:var(--gold); box-shadow:0 0 0 3px var(--gold-dim); 
+  }
+  .input-group input.calc {
+    background: linear-gradient(135deg, #fdf6e3, #f9edd0);
+    border-color: var(--gold-light);
+    font-weight:700; color:var(--gold);
+  }
+  .input-group input[type="number"]::-webkit-inner-spin-button,
+  .input-group input[type="number"]::-webkit-outer-spin-button { -webkit-appearance:none; }
+  .input-group input[type="number"] { -moz-appearance:textfield; }
+
+  .calc-badge {
+    font-size:0.6rem; text-transform:uppercase; letter-spacing:0.8px;
+    color:var(--gold); font-weight:700; margin-bottom:2px;
+  }
+
+  /* ─── RADIO & CHECKBOX GROUPS ─── */
+  .radio-group, .checkbox-group {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .radio-option, .checkbox-option {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 14px;
+    background: var(--input-bg);
+    border: 1.5px solid var(--border);
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all .2s;
+    user-select: none;
+  }
+  .radio-option:hover, .checkbox-option:hover {
+    border-color: var(--gold);
+    background: var(--gold-dim);
+  }
+  .radio-option.selected, .checkbox-option.selected {
+    background: var(--gold-dim);
+    border-color: var(--gold);
+    font-weight: 600;
+  }
+  .radio-option input[type="radio"],
+  .checkbox-option input[type="checkbox"] {
+    width: 18px;
+    height: 18px;
+    cursor: pointer;
+  }
+
+  /* ─── CONDITIONAL FIELDS ─── */
+  .conditional-fields {
+    display: none;
+    margin-top: 14px;
+    padding: 14px;
+    background: var(--gold-dim);
+    border-radius: 8px;
+    border-left: 3px solid var(--gold);
+  }
+  .conditional-fields.show { display: block; }
+
+  /* ─── VACANCY SELECT ─── */
+  .vacancy-select-group {
+    margin-bottom: 16px;
+  }
+  .vacancy-select-group label {
+    font-size:0.72rem; color:var(--text-muted); font-weight:500;
+    margin-bottom:8px; display:block;
+  }
+  .vacancy-options {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  .vacancy-option {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 14px;
+    background: var(--input-bg);
+    border: 1.5px solid var(--border);
+    border-radius: 8px;
+    font-size: 0.82rem;
+    cursor: pointer;
+    transition: all .2s;
+    user-select: none;
+  }
+  .vacancy-option:hover {
+    border-color: var(--gold);
+    background: var(--gold-dim);
+  }
+  .vacancy-option input[type="checkbox"] {
+    width: 16px;
+    height: 16px;
+    cursor: pointer;
+  }
+  .vacancy-option.selected {
+    background: var(--gold-dim);
+    border-color: var(--gold);
+    font-weight: 600;
+  }
+
+  /* ─── ACTION BUTTONS ─── */
+  .action-buttons {
+    display: flex;
+    gap: 12px;
+    padding: 22px;
+    border-top: 1px solid var(--border);
+    background: var(--cream-dark);
+  }
+  .btn-save, .btn-submit {
+    flex: 1;
+    padding: 15px;
+    border: none;
+    border-radius: 10px;
+    font-size: 1rem;
+    font-weight: 600;
+    font-family: inherit;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    transition: transform .15s, box-shadow .2s;
+  }
+  .btn-save {
+    background: linear-gradient(135deg, var(--blue), #1f5a9a);
+    color: #fff;
+    box-shadow: 0 4px 14px rgba(45,109,179,0.25);
+  }
+  .btn-save:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(45,109,179,0.3);
+  }
+  .btn-submit {
+    background: linear-gradient(135deg, var(--navy), var(--navy-light));
+    color: #fff;
+    box-shadow: 0 4px 14px rgba(15,27,45,0.25);
+  }
+  .btn-submit:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(15,27,45,0.3);
+  }
+  .btn-save:active, .btn-submit:active { transform: translateY(0); }
+  .btn-save:disabled, .btn-submit:disabled {
+    opacity: 0.55;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+  }
+  .btn-save svg, .btn-submit svg { width: 18px; height: 18px; }
+
+  /* ─── SUCCESS DIALOG ─── */
+  .dialog-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(15,27,45,0.7);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    animation: fadeIn .3s;
+  }
+  .dialog-overlay.show { display: flex; }
+  
+  .dialog {
+    background: var(--white);
+    border-radius: 16px;
+    max-width: 480px;
+    width: 90%;
+    padding: 32px;
+    box-shadow: 0 10px 40px rgba(15,27,45,0.3);
+    animation: slideUp .3s;
+  }
+  
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+  
+  @keyframes slideUp {
+    from { transform: translateY(20px); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
+  }
+  
+  .dialog-icon {
+    width: 72px;
+    height: 72px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--green), #249150);
+    margin: 0 auto 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .dialog-icon svg {
+    width: 36px;
+    height: 36px;
+    color: #fff;
+  }
+  
+  .dialog-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.5rem;
+    color: var(--navy);
+    text-align: center;
+    margin-bottom: 12px;
+  }
+  
+  .dialog-message {
+    font-size: 0.95rem;
+    color: var(--text-muted);
+    text-align: center;
+    margin-bottom: 28px;
+    line-height: 1.6;
+  }
+  
+  .dialog-actions {
+    display: flex;
+    gap: 12px;
+  }
+  
+  .dialog-btn {
+    flex: 1;
+    padding: 14px;
+    border: none;
+    border-radius: 10px;
+    font-size: 0.95rem;
+    font-weight: 600;
+    font-family: inherit;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    transition: all .2s;
+  }
+  
+  .dialog-btn.primary {
+    background: linear-gradient(135deg, var(--navy), var(--navy-light));
+    color: #fff;
+  }
+  
+  .dialog-btn.secondary {
+    background: var(--cream-dark);
+    color: var(--navy);
+    border: 1.5px solid var(--border);
+  }
+  
+  .dialog-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(15,27,45,0.15);
+  }
+  
+  .dialog-btn svg {
+    width: 18px;
+    height: 18px;
+  }
+
+  /* ─── TOAST ─── */
+  .toast {
+    position:fixed; bottom:28px; left:50%; transform:translateX(-50%) translateY(120%);
+    background:var(--navy); color:#fff; padding:14px 28px;
+    border-radius:10px; font-size:0.85rem; font-weight:500;
+    box-shadow: var(--shadow-md); z-index:999;
+    transition: transform .35s cubic-bezier(.4,0,.2,1);
+    display:flex; align-items:center; gap:10px;
+  }
+  .toast.show { transform:translateX(-50%) translateY(0); }
+  .toast.success { background:var(--green); }
+  .toast.error   { background:var(--red); }
+  .toast.info    { background:var(--blue); }
+  .toast svg { width:18px; height:18px; flex-shrink:0; }
+
+  /* ─── LOADING OVERLAY ─── */
+  .overlay {
+    position:fixed; inset:0; background:rgba(15,27,45,0.45);
+    display:none; align-items:center; justify-content:center; z-index:900;
+  }
+  .overlay.show { display:flex; }
+  .spinner {
+    width:42px; height:42px; border:4px solid rgba(255,255,255,0.2);
+    border-top-color:#fff; border-radius:50%;
+    animation: spin .6s linear infinite;
+  }
+  @keyframes spin { to { transform:rotate(360deg); } }
+
+  /* ─── RESPONSIVE ─── */
+  @media(max-width:600px){
+    .info-strip { grid-template-columns:1fr 1fr; }
+    .input-grid { grid-template-columns:1fr 1fr; }
+    .banner-org { font-size:1.35rem; }
+    .action-buttons { flex-direction: column; }
+    .dialog-actions { flex-direction: column; }
+  }
+ @media(max-width:380px){
+    .input-grid { grid-template-columns:1fr; }
+    .info-strip { grid-template-columns:1fr; }
+  }
+
+  /* ─── PROJECT CARDS ─── */
+  .project-card {
+    background: var(--white);
+    border: 2px solid var(--gold-light);
+    border-radius: 10px;
+    padding: 16px;
+    margin-bottom: 16px;
+    position: relative;
+  }
+
+  .project-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .project-card-title {
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: var(--gold);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+
+  .project-remove-btn {
+    background: var(--red);
+    color: #fff;
+    border: none;
+    padding: 6px 12px;
+    border-radius: 6px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all .2s;
+  }
+
+  .project-remove-btn:hover {
+    background: #b02a37;
+    transform: translateY(-1px);
+  }
+</style>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.31/jspdf.plugin.autotable.min.js"></script>
+</head>
+<body>
+
+<!-- ══════════════════ LOGOUT BUTTON ══════════════════ -->
+<button class="logout-btn" id="logoutBtn" onclick="logout()">
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+    <polyline points="16 17 21 12 16 7"/>
+    <line x1="21" y1="12" x2="9" y2="12"/>
+  </svg>
+  Logout
+</button>
+
+<!-- ══════════════════ TOP BANNER ══════════════════ -->
+<header class="top-banner">
+  <div class="banner-inner">
+    <div class="banner-district">Ahafo Ano South West District</div>
+    <div class="banner-org">Ghana Education Service</div>
+    <div class="banner-unit">Statistics &amp; Planning Unit</div>
+    <div class="banner-divider"></div>
+  </div>
+</header>
+
+<!-- ══════════════════ MAIN ══════════════════ -->
+<div class="main-wrap">
+
+ <!-- AUTH -->
+  <div id="auth-section">
+    <div class="card">
+      <div class="card-body">
+        <div class="auth-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="8" r="4"/><path d="M20 21a8 8 0 1 0-16 0"/>
+          </svg>
+        </div>
+        <div class="auth-title">Staff Verification</div>
+        <div class="auth-sub">Enter your Unique ID to access the data entry form</div>
+        <div class="auth-input-wrap">
+          <span class="auth-input-icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18"/><path d="M9 21V9"/></svg>
+          </span>
+          <input type="tel" inputmode="numeric" pattern="[0-9]*" class="auth-input" id="uniqueIdInput" placeholder="e.g. 202412345" autocomplete="off" />
+        </div>
+        <button class="btn-verify" onclick="verifyStaff()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+          Verify &amp; Continue
+        </button>
+        <div class="auth-error" id="authError">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 8v4m0 4h.01"/></svg>
+          <span id="authErrorMsg">Invalid Unique ID. Please try again.</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- FORM (hidden until verified) -->
+  <div id="form-section">
+    <div class="card" id="mainCard">
+      <!-- User Info Strip -->
+      <div class="info-strip" id="infoStrip">
+        <div class="info-item"><label>School</label><span id="disp-school">—</span></div>
+        <div class="info-item"><label>EMIS Code</label><span id="disp-emis">—</span></div>
+        <div class="info-item"><label>Level</label><span id="disp-level">—</span></div>
+        <div class="info-item"><label>Headteacher</label><span id="disp-ht">—</span></div>
+        <div class="info-item"><label>Staff ID</label><span id="disp-sid">—</span></div>
+        <div class="info-item"><label>Established Date</label><span id="disp-est">—</span></div>
+      </div>
+
+      <!-- ─── ENROLMENT ─── -->
+      <div class="section-header open" onclick="toggleSection(this)">
+        <div class="section-header-left">
+          <div class="section-icon enrol">📚</div>
+          <div><div class="section-title">Enrolment</div><div class="section-count">Level-specific enrolment data</div></div>
+        </div>
+        <svg class="toggle-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 9l6 6 6-6"/></svg>
+      </div>
+      <div class="section-body open" id="body-enrol">
+        <div class="section-body-inner" id="enrol-fields"></div>
+      </div>
+
+      <!-- ─── STAFFING ─── -->
+      <div class="section-header" onclick="toggleSection(this)">
+        <div class="section-header-left">
+          <div class="section-icon staff">👥</div>
+          <div><div class="section-title">Staffing</div><div class="section-count">Trained teachers</div></div>
+        </div>
+        <svg class="toggle-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 9l6 6 6-6"/></svg>
+      </div>
+      <div class="section-body" id="body-staff">
+        <div class="section-body-inner" id="staff-fields"></div>
+      </div>
+
+      <!-- ─── FURNITURE ─── -->
+      <div class="section-header" onclick="toggleSection(this)">
+        <div class="section-header-left">
+          <div class="section-icon furn">🪑</div>
+          <div><div class="section-title">Furniture</div><div class="section-count">Desks &amp; tables</div></div>
+        </div>
+        <svg class="toggle-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 9l6 6 6-6"/></svg>
+      </div>
+      <div class="section-body" id="body-furn">
+        <div class="section-body-inner" id="furn-fields"></div>
+      </div>
+
+      <!-- ─── CLASSROOMS & VACANCIES ─── -->
+      <div class="section-header" onclick="toggleSection(this)">
+        <div class="section-header-left">
+          <div class="section-icon class">🏫</div>
+          <div><div class="section-title">Classrooms &amp; Vacancies</div><div class="section-count">Permanent, temporary &amp; vacancies</div></div>
+        </div>
+        <svg class="toggle-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 9l6 6 6-6"/></svg>
+      </div>
+      <div class="section-body" id="body-class">
+        <div class="section-body-inner" id="class-fields"></div>
+      </div>
+
+      <!-- ─── STAFF ACCOMMODATION ─── -->
+      <div class="section-header" onclick="toggleSection(this)">
+        <div class="section-header-left">
+          <div class="section-icon accom">🏠</div>
+          <div><div class="section-title">Staff Accommodation</div><div class="section-count">Flats &amp; bungalows</div></div>
+        </div>
+        <svg class="toggle-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 9l6 6 6-6"/></svg>
+      </div>
+      <div class="section-body" id="body-accom">
+        <div class="section-body-inner">
+          <div class="input-group" style="margin-bottom:14px;">
+            <label>Does the school have staff accommodation (flats/bungalows)?</label>
+            <div class="radio-group">
+              <label class="radio-option">
+                <input type="radio" name="hasStaffAccommodation" value="Yes" onchange="toggleConditional('accom-details', this.value === 'Yes')">
+                <span>Yes</span>
+              </label>
+              <label class="radio-option">
+                <input type="radio" name="hasStaffAccommodation" value="No" onchange="toggleConditional('accom-details', this.value === 'Yes')">
+                <span>No</span>
+              </label>
+            </div>
+          </div>
+
+          <div class="conditional-fields" id="accom-details">
+            <div class="input-grid">
+              <div class="input-group">
+                <label>Total Teachers Occupying</label>
+                <input type="number" id="staffAccom_Total" placeholder="0" />
+              </div>
+              <div class="input-group">
+                <label>Male Teachers</label>
+                <input type="number" id="staffAccom_Male" placeholder="0" />
+              </div>
+              <div class="input-group">
+                <label>Female Teachers</label>
+                <input type="number" id="staffAccom_Female" placeholder="0" />
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ─── WATER SUPPLY ─── -->
+      <div class="section-header" onclick="toggleSection(this)">
+        <div class="section-header-left">
+          <div class="section-icon water">💧</div>
+          <div><div class="section-title">Water Supply</div><div class="section-count">Access &amp; source</div></div>
+        </div>
+        <svg class="toggle-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 9l6 6 6-6"/></svg>
+      </div>
+      <div class="section-body" id="body-water">
+        <div class="section-body-inner">
+          <div class="input-group" style="margin-bottom:14px;">
+            <label>Does the school have access to clean and reliable water?</label>
+            <div class="radio-group">
+              <label class="radio-option">
+                <input type="radio" name="hasWaterAccess" value="Yes" onchange="toggleConditional('water-details', this.value === 'Yes')">
+                <span>Yes</span>
+              </label>
+              <label class="radio-option">
+                <input type="radio" name="hasWaterAccess" value="No" onchange="toggleConditional('water-details', this.value === 'Yes')">
+                <span>No</span>
+              </label>
+            </div>
+          </div>
+
+          <div class="conditional-fields" id="water-details">
+            <div class="input-group" style="margin-bottom:12px;">
+              <label>Water source ownership</label>
+              <div class="radio-group">
+                <label class="radio-option">
+                  <input type="radio" name="waterOwnership" value="School-owned">
+                  <span>School-owned</span>
+                </label>
+                <label class="radio-option">
+                  <input type="radio" name="waterOwnership" value="Community-owned">
+                  <span>Community-owned</span>
+                </label>
+              </div>
+            </div>
+
+            <div class="input-group" style="margin-bottom:12px;">
+              <label>Is the water source shared with a nearby school?</label>
+              <div class="radio-group">
+                <label class="radio-option">
+                  <input type="radio" name="waterShared" value="Yes">
+                  <span>Yes</span>
+                </label>
+                <label class="radio-option">
+                  <input type="radio" name="waterShared" value="No">
+                  <span>No</span>
+                </label>
+              </div>
+            </div>
+
+            <div class="input-group">
+              <label>Type of water source (select all that apply)</label>
+              <div class="checkbox-group">
+                <label class="checkbox-option">
+                  <input type="checkbox" name="waterSourceTypes" value="Pipe-borne water" onchange="toggleCheckboxStyle(this)">
+                  <span>Pipe-borne water</span>
+                </label>
+                <label class="checkbox-option">
+                  <input type="checkbox" name="waterSourceTypes" value="Borehole" onchange="toggleCheckboxStyle(this)">
+                  <span>Borehole</span>
+                </label>
+                <label class="checkbox-option">
+                  <input type="checkbox" name="waterSourceTypes" value="Well" onchange="toggleCheckboxStyle(this)">
+                  <span>Well</span>
+                </label>
+                <label class="checkbox-option">
+                  <input type="checkbox" name="waterSourceTypes" value="River/Stream" onchange="toggleCheckboxStyle(this)">
+                  <span>River/Stream</span>
+                </label>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    <!-- ─── SANITATION ─── -->
+<div class="section-header" onclick="toggleSection(this)">
+  <div class="section-header-left">
+    <div class="section-icon sanit">🚻</div>
+    <div><div class="section-title">Sanitation Facilities</div><div class="section-count">Toilets &amp; urinals</div></div>
+  </div>
+  <svg class="toggle-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 9l6 6 6-6"/></svg>
+</div>
+<div class="section-body" id="body-sanit">
+  <div class="section-body-inner">
+    <!-- TOILET -->
+    <div class="level-label">Toilet Facilities</div>
+    
+    <div class="input-group" style="margin-bottom:12px;">
+      <label>Does the school own toilet facilities?</label>
+      <div class="radio-group">
+        <label class="radio-option">
+          <input type="radio" name="ownsToilet" value="Yes">
+          <span>Yes</span>
+        </label>
+        <label class="radio-option">
+          <input type="radio" name="ownsToilet" value="No">
+          <span>No</span>
+        </label>
+      </div>
+    </div>
+
+    <div class="input-group" style="margin-bottom:12px;">
+      <label>Do learners have access to toilet facilities?</label>
+      <div class="radio-group">
+        <label class="radio-option">
+          <input type="radio" name="learnersToiletAccess" value="Yes, school-owned facility">
+          <span>Yes, school-owned facility</span>
+        </label>
+        <label class="radio-option">
+          <input type="radio" name="learnersToiletAccess" value="Yes, public/community/shared facility">
+          <span>Yes, public/community/shared facility</span>
+        </label>
+        <label class="radio-option">
+          <input type="radio" name="learnersToiletAccess" value="Home (learners go home)">
+          <span>Home (learners go home)</span>
+        </label>
+        <label class="radio-option">
+          <input type="radio" name="learnersToiletAccess" value="Open defecation">
+          <span>Open defecation</span>
+        </label>
+        <label class="radio-option">
+          <input type="radio" name="learnersToiletAccess" value="No access">
+          <span>No access</span>
+        </label>
+      </div>
+    </div>
+
+    <div class="input-grid two-col" style="margin-bottom:18px;">
+      <div class="input-group">
+        <label>Toilet Cubicles - Boys</label>
+        <input type="number" id="toiletCubicles_Boys" placeholder="0" />
+      </div>
+      <div class="input-group">
+        <label>Toilet Cubicles - Girls</label>
+        <input type="number" id="toiletCubicles_Girls" placeholder="0" />
+      </div>
+    </div>
+
+    <!-- URINAL -->
+    <div class="level-label">Urinal Facilities</div>
+    
+    <div class="input-group" style="margin-bottom:12px;">
+      <label>Does the school own urinal facilities?</label>
+      <div class="radio-group">
+        <label class="radio-option">
+          <input type="radio" name="ownsUrinal" value="Yes">
+          <span>Yes</span>
+        </label>
+        <label class="radio-option">
+          <input type="radio" name="ownsUrinal" value="No">
+          <span>No</span>
+        </label>
+      </div>
+    </div>
+
+    <div class="input-group" style="margin-bottom:12px;">
+      <label>Do learners have access to urinal facilities?</label>
+      <div class="radio-group">
+        <label class="radio-option">
+          <input type="radio" name="learnersUrinalAccess" value="Yes, school-owned facility">
+          <span>Yes, school-owned facility</span>
+        </label>
+        <label class="radio-option">
+          <input type="radio" name="learnersUrinalAccess" value="Yes, public/community/shared facility">
+          <span>Yes, public/community/shared facility</span>
+        </label>
+        <label class="radio-option">
+          <input type="radio" name="learnersUrinalAccess" value="Home (learners go home)">
+          <span>Home (learners go home)</span>
+        </label>
+        <label class="radio-option">
+          <input type="radio" name="learnersUrinalAccess" value="Open urination">
+          <span>Open urination</span>
+        </label>
+        <label class="radio-option">
+          <input type="radio" name="learnersUrinalAccess" value="No access">
+          <span>No access</span>
+        </label>
+      </div>
+    </div>
+
+    <div class="input-grid two-col">
+      <div class="input-group">
+        <label>Urinal Stations - Boys</label>
+        <input type="number" id="urinalStations_Boys" placeholder="0" />
+      </div>
+      <div class="input-group">
+        <label>Urinal Stations - Girls</label>
+        <input type="number" id="urinalStations_Girls" placeholder="0" />
+      </div>
+    </div>
+  </div>
+</div>
+     <!-- ─── ONGOING PROJECTS ─── -->
+      <div class="section-header" onclick="toggleSection(this)">
+        <div class="section-header-left">
+          <div class="section-icon proj">🏗️</div>
+          <div><div class="section-title">Ongoing Projects</div><div class="section-count">Current development initiatives</div></div>
+        </div>
+        <svg class="toggle-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 9l6 6 6-6"/></svg>
+      </div>
+      <div class="section-body" id="body-proj">
+        <div class="section-body-inner">
+          <div class="input-group" style="margin-bottom:14px;">
+            <label>Does the school have any ongoing projects?</label>
+            <div class="radio-group">
+              <label class="radio-option">
+                <input type="radio" name="hasOngoingProjects" value="Yes" onchange="toggleConditional('proj-details', this.value === 'Yes')">
+                <span>Yes</span>
+              </label>
+              <label class="radio-option">
+                <input type="radio" name="hasOngoingProjects" value="No" onchange="toggleConditional('proj-details', this.value === 'Yes')">
+                <span>No</span>
+              </label>
+            </div>
+          </div>
+
+          <div class="conditional-fields" id="proj-details">
+            <div id="projects-container"></div>
+            
+            <button type="button" onclick="addProject()" style="
+              width: 100%;
+              padding: 12px;
+              background: linear-gradient(135deg, var(--gold), #b8891f);
+              color: #fff;
+              border: none;
+              border-radius: 8px;
+              font-size: 0.85rem;
+              font-weight: 600;
+              cursor: pointer;
+              margin-top: 12px;
+              display: flex;
+              align-items: center;
+              justify-content: center;
+              gap: 8px;
+            ">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="12" y1="5" x2="12" y2="19"/>
+                <line x1="5" y1="12" x2="19" y2="12"/>
+              </svg>
+              Add Another Project
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- ─── FURNITURE & EQUIPMENT ─── -->
+      <div class="section-header" onclick="toggleSection(this)">
+        <div class="section-header-left">
+          <div class="section-icon equip">📐</div>
+          <div><div class="section-title">Teachers' Furniture</div><div class="section-count">Desks &amp; chairs</div></div>
+        </div>
+        <svg class="toggle-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 9l6 6 6-6"/></svg>
+      </div>
+      <div class="section-body" id="body-equip">
+        <div class="section-body-inner">
+          <div class="input-grid two-col">
+            <div class="input-group">
+              <label>Number of Teachers' Desks</label>
+              <input type="number" id="teachersDesks" placeholder="0" />
+            </div>
+            <div class="input-group">
+              <label>Number of Teachers' Chairs</label>
+              <input type="number" id="teachersChairs" placeholder="0" />
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ─── FACILITIES & PROGRAMS ─── -->
+      <div class="section-header" onclick="toggleSection(this)">
+        <div class="section-header-left">
+          <div class="section-icon facil">✨</div>
+          <div><div class="section-title">Facilities &amp; Programs</div><div class="section-count">Available amenities</div></div>
+        </div>
+        <svg class="toggle-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 9l6 6 6-6"/></svg>
+      </div>
+      <div class="section-body" id="body-facil">
+        <div class="section-body-inner">
+          <div class="input-group" style="margin-bottom:12px;">
+            <label>Does the school have a staff common room?</label>
+            <div class="radio-group">
+              <label class="radio-option">
+                <input type="radio" name="hasStaffCommonRoom" value="Yes">
+                <span>Yes</span>
+              </label>
+              <label class="radio-option">
+                <input type="radio" name="hasStaffCommonRoom" value="No">
+                <span>No</span>
+              </label>
+            </div>
+          </div>
+
+          <div class="input-group" style="margin-bottom:12px;">
+            <label>Does the school have an ICT laboratory?</label>
+            <div class="radio-group">
+              <label class="radio-option">
+                <input type="radio" name="hasICTLab" value="Yes">
+                <span>Yes</span>
+              </label>
+              <label class="radio-option">
+                <input type="radio" name="hasICTLab" value="No">
+                <span>No</span>
+              </label>
+            </div>
+          </div>
+
+          <div class="input-group" style="margin-bottom:12px;">
+            <label>Does the school have a library?</label>
+            <div class="radio-group">
+              <label class="radio-option">
+                <input type="radio" name="hasLibrary" value="Yes">
+                <span>Yes</span>
+              </label>
+              <label class="radio-option">
+                <input type="radio" name="hasLibrary" value="No">
+                <span>No</span>
+              </label>
+            </div>
+          </div>
+
+          <div class="input-group" style="margin-bottom:12px;">
+            <label>Does the school have a school farm?</label>
+            <div class="radio-group">
+              <label class="radio-option">
+                <input type="radio" name="hasSchoolFarm" value="Yes">
+                <span>Yes</span>
+              </label>
+              <label class="radio-option">
+                <input type="radio" name="hasSchoolFarm" value="No">
+                <span>No</span>
+              </label>
+            </div>
+          </div>
+
+          <div class="input-group" style="margin-bottom:12px;">
+            <label>Is the school a GALOP (Ghana Accountability for Learning Outcomes Project) beneficiary?</label>
+            <div class="radio-group">
+              <label class="radio-option">
+                <input type="radio" name="isGALOP" value="Yes">
+                <span>Yes</span>
+              </label>
+              <label class="radio-option">
+                <input type="radio" name="isGALOP" value="No">
+                <span>No</span>
+              </label>
+            </div>
+          </div>
+
+          <div class="input-group" style="margin-bottom:12px;">
+            <label>Is the school a School Feeding Programme beneficiary?</label>
+            <div class="radio-group">
+              <label class="radio-option">
+                <input type="radio" name="isSchoolFeeding" value="Yes">
+                <span>Yes</span>
+              </label>
+              <label class="radio-option">
+                <input type="radio" name="isSchoolFeeding" value="No">
+                <span>No</span>
+              </label>
+            </div>
+          </div>
+
+          <div class="input-group" style="margin-bottom:12px;">
+            <label>Does the school have access to electricity?</label>
+            <div class="radio-group">
+              <label class="radio-option">
+                <input type="radio" name="hasElectricity" value="Yes" onchange="toggleConditional('elec-source', this.value === 'Yes')">
+                <span>Yes</span>
+              </label>
+              <label class="radio-option">
+                <input type="radio" name="hasElectricity" value="No" onchange="toggleConditional('elec-source', this.value === 'Yes')">
+                <span>No</span>
+              </label>
+            </div>
+          </div>
+
+          <div class="conditional-fields" id="elec-source">
+            <div class="input-group">
+              <label>Electricity source</label>
+              <div class="radio-group">
+                <label class="radio-option">
+                  <input type="radio" name="electricitySource" value="National grid">
+                  <span>National grid</span>
+                </label>
+                <label class="radio-option">
+                  <input type="radio" name="electricitySource" value="Solar">
+                  <span>Solar</span>
+                </label>
+                <label class="radio-option">
+                  <input type="radio" name="electricitySource" value="Generator">
+                  <span>Generator</span>
+                </label>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ACTION BUTTONS -->
+      <div class="action-buttons">
+        <button class="btn-save" id="saveBtn" onclick="saveProgress()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/>
+            <polyline points="17 21 17 13 7 13 7 21"/>
+            <polyline points="7 3 7 8 15 8"/>
+          </svg>
+          Save Progress
+        </button>
+        <button class="btn-submit" id="submitBtn" onclick="submitForm()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+          Submit Data
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SUCCESS DIALOG -->
+<div class="dialog-overlay" id="successDialog">
+  <div class="dialog">
+    <div class="dialog-icon">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
+        <polyline points="22 4 12 14.01 9 11.01"/>
+      </svg>
+    </div>
+    <h2 class="dialog-title">Submission Successful!</h2>
+    <p class="dialog-message">Your school statistics have been successfully submitted and recorded.</p>
+    <div class="dialog-actions">
+      <button class="dialog-btn primary" onclick="viewAndDownloadData()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+          <polyline points="7 10 12 15 17 10"/>
+          <line x1="12" y1="15" x2="12" y2="3"/>
+        </svg>
+        View & Download PDF
+      </button>
+      <button class="dialog-btn secondary" onclick="closeDialogAndExit()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="20 6 9 17 4 12"/>
+        </svg>
+        OK
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- LOADING OVERLAY -->
+<div class="overlay" id="loadingOverlay"><div class="spinner"></div></div>
+
+<!-- TOAST -->
+<div class="toast" id="toast">
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+  <span id="toastMsg">Success</span>
+</div>
+
+<script>
+// ═══════════════════════════════════════════════════════
+//  SCRIPT URL  
+// ═══════════════════════════════════════════════════════
+const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyM7OGIZa2EFqBRWeIaxn6tQPPyBMqQTasFkm5Zx0kTgbYvaWJ8Ad1NQMUQElLzI-QP/exec';
+
+// ═══════════════════════════════════════════════════════
+//  VACANCY OPTIONS BY LEVEL
+// ═══════════════════════════════════════════════════════
+const VACANCY_OPTIONS = {
+  'KG_&_PRIMARY': [
+    'KG 1', 'KG 2', 'Basic 1', 'Basic 2', 'Basic 3', 'Basic 4', 'Basic 5', 'Basic 6'
+  ],
+  'BASIC': [
+    'KG 1', 'KG 2', 'Basic 1', 'Basic 2', 'Basic 3', 'Basic 4', 'Basic 5', 'Basic 6',
+    'Arabic', 'Career Technology', 'Computing', 'Creative Arts & Design',
+    'English Language', 'French', 'Ghanaian Language', 'Mathematics',
+    'Physical Education', 'Religious & Moral Education', 'Science', 'Social Studies'
+  ],
+  'JHS ONLY': [
+    'Arabic', 'Career Technology', 'Computing', 'Creative Arts & Design',
+    'English Language', 'French', 'Ghanaian Language', 'Mathematics',
+    'Physical Education', 'Religious & Moral Education', 'Science', 'Social Studies'
+  ]
+};
+
+// ═══════════════════════════════════════════════════════
+//  LEVEL CONFIGURATION
+// ═══════════════════════════════════════════════════════
+const LEVEL_CONFIG = {
+  'BASIC': {
+    enrolment: ['KG 1', 'KG 2', 'Basic 1', 'Basic 2', 'Basic 3', 'Basic 4', 'Basic 5', 'Basic 6', 'JHS 1', 'JHS 2', 'JHS 3'],
+    staffing: ['Kindergarten (KG)', 'Primary', 'Junior High School (JHS)'],
+    furniture: {
+      kg: ['KG 1', 'KG 2'],
+      desk: ['Basic 1', 'Basic 2', 'Basic 3', 'Basic 4', 'Basic 5', 'Basic 6', 'JHS 1', 'JHS 2', 'JHS 3']
+    },
+    classrooms: ['KG', 'Primary', 'JHS']
+  },
+  'JHS ONLY': {
+    enrolment: ['JHS 1', 'JHS 2', 'JHS 3'],
+    staffing: ['Junior High School (JHS)'],
+    furniture: {
+      kg: [],
+      desk: ['JHS 1', 'JHS 2', 'JHS 3']
+    },
+    classrooms: ['JHS']
+  },
+  'KG_&_PRIMARY': {
+    enrolment: ['KG 1', 'KG 2', 'Basic 1', 'Basic 2', 'Basic 3', 'Basic 4', 'Basic 5', 'Basic 6'],
+    staffing: ['Kindergarten (KG)', 'Primary'],
+    furniture: {
+      kg: ['KG 1', 'KG 2'],
+      desk: ['Basic 1', 'Basic 2', 'Basic 3', 'Basic 4', 'Basic 5', 'Basic 6']
+    },
+    classrooms: ['KG', 'Primary']
+  }
+};
+
+let verifiedRow = null;
+let currentLevel = null;
+let selectedVacancies = [];
+let projectCounter = 0;
+let projects = [];
+
+const PROJECT_TYPES = [
+  'Infrastructure (classroom construction/renovation)',
+  'Water facility installation',
+  'Toilet/sanitation facility',
+  'ICT lab setup',
+  'Library construction',
+  'Staff accommodation',
+  'Sports facility',
+  'School farm development'
+];
+
+const FUNDING_SOURCES = [
+  'GES/Government',
+  'District Assembly',
+  'NGO/Donor organization',
+  'Community/PTA',
+  'Religious organization',
+  'Private sponsor'
+];
+
+// ═══════════════════════════════════════════════════════
+//  PROJECTS MANAGEMENT
+// ═══════════════════════════════════════════════════════
+function addProject() {
+  projectCounter++;
+  const projectId = 'project_' + projectCounter;
+  
+  const projectCard = document.createElement('div');
+  projectCard.className = 'project-card';
+  projectCard.id = projectId;
+  
+  projectCard.innerHTML = `
+    <div class="project-card-header">
+      <div class="project-card-title">Project ${projectCounter}</div>
+      <button type="button" class="project-remove-btn" onclick="removeProject('${projectId}')">Remove</button>
+    </div>
+    
+    <div class="input-group" style="margin-bottom: 12px;">
+      <label>Project Type</label>
+      <select id="${projectId}_type" style="
+        padding: 9px 11px;
+        border: 1.5px solid var(--border);
+        border-radius: 8px;
+        font-size: 0.88rem;
+        font-family: inherit;
+        background: var(--input-bg);
+        color: var(--navy);
+        width: 100%;
+      ">
+        <option value="">Select project type...</option>
+        ${PROJECT_TYPES.map(type => `<option value="${type}">${type}</option>`).join('')}
+      </select>
+    </div>
+    
+    <div class="input-group" style="margin-bottom: 12px;">
+      <label>Funding Source (select all that apply)</label>
+      <div class="checkbox-group">
+        ${FUNDING_SOURCES.map(source => `
+          <label class="checkbox-option">
+            <input type="checkbox" name="${projectId}_funding" value="${source}" onchange="toggleCheckboxStyle(this)">
+            <span>${source}</span>
+          </label>
+        `).join('')}
+      </div>
+    </div>
+    
+    <div class="input-group">
+      <label>Project Start Year (optional)</label>
+      <input type="number" id="${projectId}_year" placeholder="e.g. 2024" min="2000" max="2030" style="
+        padding: 9px 11px;
+        border: 1.5px solid var(--border);
+        border-radius: 8px;
+        font-size: 0.88rem;
+        font-family: inherit;
+        background: var(--input-bg);
+        color: var(--navy);
+        width: 100%;
+      "/>
+    </div>
+  `;
+  
+  document.getElementById('projects-container').appendChild(projectCard);
+  
+  projects.push({
+    id: projectId,
+    type: '',
+    funding: [],
+    year: ''
+  });
+}
+
+function removeProject(projectId) {
+  const projectCard = document.getElementById(projectId);
+  if (projectCard) {
+    projectCard.remove();
+  }
+  
+  projects = projects.filter(p => p.id !== projectId);
+  
+  const remainingProjects = document.querySelectorAll('.project-card');
+  remainingProjects.forEach((card, index) => {
+    const title = card.querySelector('.project-card-title');
+    if (title) {
+      title.textContent = 'Project ' + (index + 1);
+    }
+  });
+}
+
+function collectProjects() {
+  const projectData = [];
+  
+  document.querySelectorAll('.project-card').forEach(card => {
+    const id = card.id;
+    const typeSelect = document.getElementById(id + '_type');
+    const yearInput = document.getElementById(id + '_year');
+    const fundingCheckboxes = document.querySelectorAll(`input[name="${id}_funding"]:checked`);
+    
+    const type = typeSelect ? typeSelect.value : '';
+    const year = yearInput ? yearInput.value : '';
+    const funding = Array.from(fundingCheckboxes).map(cb => cb.value);
+    
+    if (type) {
+      projectData.push({
+        type: type,
+        funding: funding,
+        year: year
+      });
+    }
+  });
+  
+  return projectData;
+}
+
+// ═══════════════════════════════════════════════════════
+//  LOCAL STORAGE HELPERS
+// ═══════════════════════════════════════════════════════
+function saveToLocalStorage(key, data) {
+  try {
+    localStorage.setItem(key, JSON.stringify(data));
+    return true;
+  } catch(e) {
+    console.error('Failed to save to localStorage:', e);
+    return false;
+  }
+}
+
+function getFromLocalStorage(key) {
+  try {
+    const data = localStorage.getItem(key);
+    return data ? JSON.parse(data) : null;
+  } catch(e) {
+    console.error('Failed to load from localStorage:', e);
+    return null;
+  }
+}
+
+function clearLocalStorage(key) {
+  try {
+    localStorage.removeItem(key);
+  } catch(e) {
+    console.error('Failed to clear localStorage:', e);
+  }
+}
+
+// ═══════════════════════════════════════════════════════
+//  CONDITIONAL FIELD TOGGLE
+// ═══════════════════════════════════════════════════════
+function toggleConditional(id, show) {
+  const el = document.getElementById(id);
+  if (el) {
+    if (show) {
+      el.classList.add('show');
+      // Auto-add first project when "Yes" is selected
+      if (id === 'proj-details' && document.querySelectorAll('.project-card').length === 0) {
+        addProject();
+      }
+    } else {
+      el.classList.remove('show');
+      // Clear all projects when "No" is selected
+      if (id === 'proj-details') {
+        document.getElementById('projects-container').innerHTML = '';
+        projects = [];
+        projectCounter = 0;
+      }
+    }
+  }
+}
+
+function toggleCheckboxStyle(checkbox) {
+  const label = checkbox.parentElement;
+  label.classList.toggle('selected', checkbox.checked);
+}
+
+// ═══════════════════════════════════════════════════════
+//  RADIO OPTION SELECTION STYLING
+// ═══════════════════════════════════════════════════════
+document.addEventListener('change', function(e) {
+  if (e.target.type === 'radio') {
+    const name = e.target.name;
+    document.querySelectorAll(`input[name="${name}"]`).forEach(r => {
+      r.parentElement.classList.remove('selected');
+    });
+    if (e.target.checked) {
+      e.target.parentElement.classList.add('selected');
+    }
+  }
+});
+
+// ═══════════════════════════════════════════════════════
+//  FIELD BUILDERS (DYNAMIC BASED ON LEVEL)
+// ═══════════════════════════════════════════════════════
+function buildEnrolment(container, level) {
+  const config = LEVEL_CONFIG[level];
+  if (!config) return;
+  
+  let html = '';
+  const levels = config.enrolment;
+  
+  const kgLevels = levels.filter(l => l.startsWith('KG'));
+  const primaryLevels = levels.filter(l => l.startsWith('Basic'));
+  const jhsLevels = levels.filter(l => l.startsWith('JHS'));
+  
+  if (kgLevels.length > 0) {
+    html += '<div class="level-label">Kindergarten (KG)</div>';
+    kgLevels.forEach(lvl => {
+      const id = lvl.replace(/\s/g, '');
+      html += buildEnrolmentRow(id, lvl);
+    });
+  }
+  
+  if (primaryLevels.length > 0) {
+    html += '<div class="level-label">Primary (Basic 1 – 6)</div>';
+    primaryLevels.forEach(lvl => {
+      const id = lvl.replace(/\s/g, '');
+      html += buildEnrolmentRow(id, lvl);
+    });
+  }
+  
+  if (jhsLevels.length > 0) {
+    html += '<div class="level-label">Junior High School (JHS)</div>';
+    jhsLevels.forEach(lvl => {
+      const id = lvl.replace(/\s/g, '');
+      html += buildEnrolmentRow(id, lvl);
+    });
+  }
+  
+  container.innerHTML = html;
+}
+
+function buildEnrolmentRow(id, label) {
+  return `
+    <div class="input-grid" style="margin-bottom:14px;">
+      <div class="input-group">
+        <div class="calc-badge">Auto-calculated</div>
+        <label>${label} – Total Enrolment</label>
+        <input type="number" id="${id}_TotalEnrolment" class="calc" readonly placeholder="0" />
+      </div>
+      <div class="input-group">
+        <label>${label} – Boys</label>
+        <input type="number" id="${id}_Boys" oninput="calcEnrol('${id}')" placeholder="0" />
+      </div>
+      <div class="input-group">
+        <label>${label} – Girls</label>
+        <input type="number" id="${id}_Girls" oninput="calcEnrol('${id}')" placeholder="0" />
+      </div>
+    </div>`;
+}
+
+function buildStaffing(container, level) {
+  const config = LEVEL_CONFIG[level];
+  if (!config) return;
+  
+  let html = '';
+  const staffTypes = config.staffing;
+  
+  const prefixMap = {
+    'Kindergarten (KG)': 'KG',
+    'Primary': 'Primary',
+    'Junior High School (JHS)': 'JHS'
+  };
+  
+  staffTypes.forEach(s => {
+    const prefix = prefixMap[s];
+    html += `<div class="level-label">${s}</div>
+    <div class="input-grid" style="margin-bottom:14px;">
+      <div class="input-group">
+        <div class="calc-badge">Auto-calculated</div>
+        <label>${prefix} – Total Trained Teachers</label>
+        <input type="number" id="${prefix}_TotalTrainedTeachers" class="calc" readonly placeholder="0" />
+      </div>
+      <div class="input-group">
+        <label>${prefix} – Male Trained Teachers</label>
+        <input type="number" id="${prefix}_MaleTrainedTeachers" oninput="calcStaff('${prefix}')" placeholder="0" />
+      </div>
+      <div class="input-group">
+        <label>${prefix} – Female Trained Teachers</label>
+        <input type="number" id="${prefix}_FemaleTrainedTeachers" oninput="calcStaff('${prefix}')" placeholder="0" />
+      </div>
+    </div>`;
+  });
+  
+  container.innerHTML = html;
+}
+
+function buildFurniture(container, level) {
+  const config = LEVEL_CONFIG[level];
+  if (!config) return;
+  
+  let html = '';
+  
+  if (config.furniture.kg.length > 0) {
+    html += '<div class="level-label">Kindergarten (KG)</div>';
+    config.furniture.kg.forEach(lvl => {
+      const id = lvl.replace(/\s/g, '');
+      html += `
+      <div class="input-grid" style="margin-bottom:14px;">
+        <div class="input-group"><label>${lvl} – Hexagonal Tables</label><input type="number" id="${id}_HexTables" placeholder="0" /></div>
+        <div class="input-group"><label>${lvl} – Sitting Places</label><input type="number" id="${id}_SittingPlaces" placeholder="0" /></div>
+        <div class="input-group"><label>${lvl} – Writing Places</label><input type="number" id="${id}_WritingPlaces" placeholder="0" /></div>
+      </div>`;
+    });
+  }
+  
+  if (config.furniture.desk.length > 0) {
+    const primaryDesks = config.furniture.desk.filter(l => l.startsWith('Basic'));
+    const jhsDesks = config.furniture.desk.filter(l => l.startsWith('JHS'));
+    
+    if (primaryDesks.length > 0) {
+      html += '<div class="level-label">Primary (Basic 1 – 6)</div>';
+      primaryDesks.forEach(lvl => {
+        const id = lvl.replace(/\s/g, '');
+        html += `
+        <div class="input-grid two-col" style="margin-bottom:14px;">
+          <div class="input-group"><label>${lvl} – Mono Desks</label><input type="number" id="${id}_MonoDesks" placeholder="0" /></div>
+          <div class="input-group"><label>${lvl} – Dual Desks</label><input type="number" id="${id}_DualDesks" placeholder="0" /></div>
+        </div>`;
+      });
+    }
+    
+    if (jhsDesks.length > 0) {
+      html += '<div class="level-label">Junior High School (JHS)</div>';
+      jhsDesks.forEach(lvl => {
+        const id = lvl.replace(/\s/g, '');
+        html += `
+        <div class="input-grid two-col" style="margin-bottom:14px;">
+          <div class="input-group"><label>${lvl} – Mono Desks</label><input type="number" id="${id}_MonoDesks" placeholder="0" /></div>
+          <div class="input-group"><label>${lvl} – Dual Desks</label><input type="number" id="${id}_DualDesks" placeholder="0" /></div>
+        </div>`;
+      });
+    }
+  }
+  
+  container.innerHTML = html;
+}
+
+function buildClassrooms(container, level) {
+  const config = LEVEL_CONFIG[level];
+  const vacancyOptions = VACANCY_OPTIONS[level];
+  if (!config) return;
+  
+  let html = `
+  <div class="level-label">General</div>
+  <div class="input-grid two-col" style="margin-bottom:18px;">
+    <div class="input-group"><label>Number of Classrooms</label><input type="number" id="numberOfClassrooms" placeholder="0" /></div>
+  </div>
+  
+  <div class="level-label">Vacancies</div>
+  <div class="vacancy-select-group">
+    <label>Select all teaching positions/levels with vacancies:</label>
+    <div class="vacancy-options" id="vacancyOptions">`;
+  
+  if (vacancyOptions) {
+    vacancyOptions.forEach(option => {
+      const safeId = 'vacancy_' + option.replace(/\s+/g, '_').replace(/&/g, 'and');
+      html += `
+     <label class="vacancy-option">
+        <input type="checkbox" id="${safeId}" value="${option}" onchange="toggleVacancyCheckbox(this)">
+        <span>${option}</span>
+      </label>`;
+    });
+  }
+  
+  html += `
+    </div>
+  </div>
+  
+  <div class="level-label">Permanent &amp; Temporary Classrooms</div>`;
+  
+  config.classrooms.forEach(c => {
+    html += `
+    <div style="margin-bottom:14px;">
+      <div class="input-group" style="margin-bottom:10px;">
+        <label>${c} – Permanent Classrooms</label>
+        <input type="number" id="${c}_PermanentClassrooms" placeholder="0" />
+      </div>
+      <div class="input-group">
+        <label>${c} – Temporary Classrooms</label>
+        <input type="number" id="${c}_TemporaryClassrooms" placeholder="0" />
+      </div>
+    </div>`;
+  });
+  
+  container.innerHTML = html;
+}
+
+// ═══════════════════════════════════════════════════════
+//  VACANCY SELECTION
+// ═══════════════════════════════════════════════════════
+function toggleVacancyCheckbox(checkbox) {
+  const label = checkbox.parentElement;
+  label.classList.toggle('selected', checkbox.checked);
+  updateVacancySelection();
+}
+
+function updateVacancySelection() {
+  const checkboxes = document.querySelectorAll('#vacancyOptions input[type="checkbox"]');
+  selectedVacancies = [];
+  checkboxes.forEach(cb => {
+    if (cb.checked) {
+      selectedVacancies.push(cb.value);
+    }
+  });
+}
+
+// ═══════════════════════════════════════════════════════
+//  AUTO-CALC
+// ═══════════════════════════════════════════════════════
+function val(id) { 
+  const el = document.getElementById(id);
+  return el ? (parseInt(el.value) || 0) : 0;
+}
+
+function calcEnrol(id) {
+  const total = val(id+'_Boys') + val(id+'_Girls');
+  const totalEl = document.getElementById(id+'_TotalEnrolment');
+  if (totalEl) totalEl.value = total || '';
+}
+
+function calcStaff(prefix) {
+  const total = val(prefix+'_MaleTrainedTeachers') + val(prefix+'_FemaleTrainedTeachers');
+  const totalEl = document.getElementById(prefix+'_TotalTrainedTeachers');
+  if (totalEl) totalEl.value = total || '';
+}
+
+// ═══════════════════════════════════════════════════════
+//  TOGGLE SECTIONS
+// ═══════════════════════════════════════════════════════
+function toggleSection(header) {
+  const isOpen = header.classList.contains('open');
+  document.querySelectorAll('.section-header').forEach(h => h.classList.remove('open'));
+  document.querySelectorAll('.section-body').forEach(b => b.classList.remove('open'));
+  if (!isOpen) {
+    header.classList.add('open');
+    header.nextElementSibling.classList.add('open');
+  }
+}
+
+// ═══════════════════════════════════════════════════════
+//  VERIFICATION
+// ═══════════════════════════════════════════════════════
+function verifyStaff() {
+  const uid = document.getElementById('uniqueIdInput').value.trim();
+  if (!uid) { showAuthError('Please enter your Unique ID'); return; }
+
+  hideAuthError();
+  showOverlay(true);
+
+  fetch(SCRIPT_URL + '?action=verify&staffId=' + encodeURIComponent(uid), {
+    method: 'GET',
+    mode: 'cors',
+    redirect: 'follow'
+  })
+  .then(r => r.text())
+  .then(txt => JSON.parse(txt))
+  .then(data => {
+    showOverlay(false);
+    if (data.found) {
+      verifiedRow = data;
+      currentLevel = data.level;
+      showForm(data);
+      loadSavedProgress(data.staffId);
+    } else {
+      showAuthError('Unique ID not recognised. Please check and try again.');
+    }
+  })
+  .catch(() => {
+    showOverlay(false);
+    showAuthError('Connection error. Please try again.');
+  });
+}
+
+document.getElementById('uniqueIdInput').addEventListener('keydown', function(e){
+  if (e.key === 'Enter') verifyStaff();
+});
+
+function showForm(data) {
+  document.getElementById('disp-school').textContent = data.school || '—';
+  document.getElementById('disp-emis').textContent = data.emisCode || '—';
+  document.getElementById('disp-ht').textContent = data.headteacher || '—';
+  document.getElementById('disp-sid').textContent = data.staffId || '—';
+  document.getElementById('disp-est').textContent = data.establishedDate || '—';
+  document.getElementById('disp-level').textContent = data.level || '—';
+
+  const level = data.level;
+  if (LEVEL_CONFIG[level]) {
+    buildEnrolment(document.getElementById('enrol-fields'), level);
+    buildStaffing(document.getElementById('staff-fields'), level);
+    buildFurniture(document.getElementById('furn-fields'), level);
+    buildClassrooms(document.getElementById('class-fields'), level);
+  } else {
+    showToast('Unknown school level: ' + level, 'error');
+    return;
+  }
+
+  document.getElementById('auth-section').style.display = 'none';
+  document.getElementById('form-section').classList.add('show');
+  document.getElementById('logoutBtn').classList.add('show');
+}
+
+function showAuthError(msg) {
+  document.getElementById('authErrorMsg').textContent = msg;
+  document.getElementById('authError').classList.add('show');
+}
+function hideAuthError() {
+  document.getElementById('authError').classList.remove('show');
+}
+
+// ═══════════════════════════════════════════════════════
+//  HELPER: GET RADIO VALUE
+// ═══════════════════════════════════════════════════════
+function getRadioValue(name) {
+  const radio = document.querySelector(`input[name="${name}"]:checked`);
+  return radio ? radio.value : '';
+}
+
+function getCheckboxValues(name) {
+  const checkboxes = document.querySelectorAll(`input[name="${name}"]:checked`);
+  return Array.from(checkboxes).map(cb => cb.value);
+}
+
+// ═══════════════════════════════════════════════════════
+//  COLLECT PAYLOAD
+// ═══════════════════════════════════════════════════════
+function collectPayload() {
+  const payload = {
+    action: 'submit',
+    staffId: verifiedRow?.staffId,
+    level: currentLevel,
+    vacancies: selectedVacancies
+  };
+
+  const getValue = (id) => {
+    const el = document.getElementById(id);
+    return el ? (el.value || '') : '';
+  };
+
+  // Original fields
+  payload.numberOfClassrooms = getValue('numberOfClassrooms');
+
+  const config = LEVEL_CONFIG[currentLevel];
+  if (!config) return payload;
+
+  config.enrolment.forEach(lvl => {
+    const id = lvl.replace(/\s/g, '');
+    payload[id + '_TotalEnrolment'] = getValue(id + '_TotalEnrolment');
+    payload[id + '_Boys'] = getValue(id + '_Boys');
+    payload[id + '_Girls'] = getValue(id + '_Girls');
+  });
+
+  config.furniture.kg.forEach(lvl => {
+    const id = lvl.replace(/\s/g, '');
+    payload[id + '_HexTables'] = getValue(id + '_HexTables');
+    payload[id + '_SittingPlaces'] = getValue(id + '_SittingPlaces');
+    payload[id + '_WritingPlaces'] = getValue(id + '_WritingPlaces');
+  });
+
+  config.furniture.desk.forEach(lvl => {
+    const id = lvl.replace(/\s/g, '');
+    payload[id + '_MonoDesks'] = getValue(id + '_MonoDesks');
+    payload[id + '_DualDesks'] = getValue(id + '_DualDesks');
+  });
+
+  const prefixMap = {
+    'Kindergarten (KG)': 'KG',
+    'Primary': 'Primary',
+    'Junior High School (JHS)': 'JHS'
+  };
+  
+  config.staffing.forEach(s => {
+    const p = prefixMap[s];
+    payload[p + '_TotalTrainedTeachers'] = getValue(p + '_TotalTrainedTeachers');
+    payload[p + '_MaleTrainedTeachers'] = getValue(p + '_MaleTrainedTeachers');
+    payload[p + '_FemaleTrainedTeachers'] = getValue(p + '_FemaleTrainedTeachers');
+  });
+
+  config.classrooms.forEach(c => {
+    payload[c + '_PermanentClassrooms'] = getValue(c + '_PermanentClassrooms');
+    payload[c + '_TemporaryClassrooms'] = getValue(c + '_TemporaryClassrooms');
+  });
+
+  // NEW FIELDS
+  payload.hasStaffAccommodation = getRadioValue('hasStaffAccommodation');
+  payload.staffAccom_Total = getValue('staffAccom_Total');
+  payload.staffAccom_Male = getValue('staffAccom_Male');
+  payload.staffAccom_Female = getValue('staffAccom_Female');
+
+  payload.hasWaterAccess = getRadioValue('hasWaterAccess');
+  payload.waterOwnership = getRadioValue('waterOwnership');
+  payload.waterShared = getRadioValue('waterShared');
+  payload.waterSourceTypes = getCheckboxValues('waterSourceTypes');
+
+  payload.ownsToilet = getRadioValue('ownsToilet');
+  payload.learnersToiletAccess = getRadioValue('learnersToiletAccess');
+  payload.toiletCubicles_Boys = getValue('toiletCubicles_Boys');
+  payload.toiletCubicles_Girls = getValue('toiletCubicles_Girls');
+
+  payload.ownsUrinal = getRadioValue('ownsUrinal');
+  payload.learnersUrinalAccess = getRadioValue('learnersUrinalAccess');
+  payload.urinalStations_Boys = getValue('urinalStations_Boys');
+  payload.urinalStations_Girls = getValue('urinalStations_Girls');
+
+ payload.hasOngoingProjects = getRadioValue('hasOngoingProjects');
+  payload.projects = collectProjects();
+
+  payload.teachersDesks = getValue('teachersDesks');
+  payload.teachersChairs = getValue('teachersChairs');
+
+  payload.hasStaffCommonRoom = getRadioValue('hasStaffCommonRoom');
+  payload.hasICTLab = getRadioValue('hasICTLab');
+  payload.hasLibrary = getRadioValue('hasLibrary');
+  payload.hasSchoolFarm = getRadioValue('hasSchoolFarm');
+  payload.isGALOP = getRadioValue('isGALOP');
+  payload.isSchoolFeeding = getRadioValue('isSchoolFeeding');
+  payload.hasElectricity = getRadioValue('hasElectricity');
+  payload.electricitySource = getRadioValue('electricitySource');
+
+  console.log('Payload:', payload);
+  return payload;
+}
+
+// ═══════════════════════════════════════════════════════
+//  SAVE & LOAD PROGRESS
+// ═══════════════════════════════════════════════════════
+function saveProgress() {
+  if (!verifiedRow || !currentLevel) {
+    showToast('Please verify your ID first', 'error');
+    return;
+  }
+
+  const payload = collectPayload();
+  const storageKey = 'ges_form_progress_' + verifiedRow.staffId;
+  
+  if (saveToLocalStorage(storageKey, payload)) {
+    showToast('Progress saved successfully!', 'info');
+  } else {
+    showToast('Failed to save progress', 'error');
+  }
+}
+
+function loadSavedProgress(staffId) {
+  const storageKey = 'ges_form_progress_' + staffId;
+  const savedData = getFromLocalStorage(storageKey);
+  
+  if (!savedData) return;
+
+  Object.keys(savedData).forEach(key => {
+    if (['action', 'staffId', 'level', 'vacancies', 'waterSourceTypes', 'projectTypes', 'projectFunding'].includes(key)) return;
+    
+    const el = document.getElementById(key);
+    if (el) {
+      el.value = savedData[key] || '';
+      
+      if (key.includes('Boys') || key.includes('Girls')) {
+        const prefix = key.replace(/_Boys|_Girls/, '');
+        calcEnrol(prefix);
+      }
+      if (key.includes('MaleTrainedTeachers') || key.includes('FemaleTrainedTeachers')) {
+        const prefix = key.replace(/_MaleTrainedTeachers|_FemaleTrainedTeachers/, '');
+        calcStaff(prefix);
+      }
+    }
+  });
+
+  // Restore radio selections
+  ['hasStaffAccommodation', 'hasWaterAccess', 'waterOwnership', 'waterShared', 
+   'ownsToilet', 'learnersToiletAccess', 'ownsUrinal', 'learnersUrinalAccess',
+   'hasOngoingProjects', 'hasStaffCommonRoom', 'hasICTLab', 'hasLibrary',
+   'hasSchoolFarm', 'isGALOP', 'isSchoolFeeding', 'hasElectricity', 'electricitySource'].forEach(name => {
+    if (savedData[name]) {
+      const radio = document.querySelector(`input[name="${name}"][value="${savedData[name]}"]`);
+      if (radio) {
+        radio.checked = true;
+        radio.parentElement.classList.add('selected');
+        
+        // Trigger conditionals
+        if (name === 'hasStaffAccommodation') toggleConditional('accom-details', savedData[name] === 'Yes');
+        if (name === 'hasWaterAccess') toggleConditional('water-details', savedData[name] === 'Yes');
+        if (name === 'hasOngoingProjects') toggleConditional('proj-details', savedData[name] === 'Yes');
+        if (name === 'hasElectricity') toggleConditional('elec-source', savedData[name] === 'Yes');
+      }
+    }
+  });
+
+  // Restore checkbox arrays
+ // Restore checkbox arrays
+  ['waterSourceTypes'].forEach(key => {
+    if (savedData[key] && Array.isArray(savedData[key])) {
+      savedData[key].forEach(value => {
+        const checkbox = document.querySelector(`input[name="${key}"][value="${value}"]`);
+        if (checkbox) {
+          checkbox.checked = true;
+          checkbox.parentElement.classList.add('selected');
+        }
+      });
+    }
+  });
+
+  // Restore vacancies
+  if (savedData.vacancies && Array.isArray(savedData.vacancies)) {
+    selectedVacancies = savedData.vacancies;
+    savedData.vacancies.forEach(vacancy => {
+      const safeId = 'vacancy_' + vacancy.replace(/\s+/g, '_').replace(/&/g, 'and');
+      const checkbox = document.getElementById(safeId);
+      if (checkbox) {
+        checkbox.checked = true;
+        checkbox.parentElement.classList.add('selected');
+      }
+    });
+  }
+
+// Restore projects
+  if (savedData.hasOngoingProjects === 'Yes' && savedData.projects && Array.isArray(savedData.projects)) {
+    savedData.projects.forEach((project, index) => {
+      addProject();
+      const projectId = 'project_' + (index + 1);
+      
+      const typeSelect = document.getElementById(projectId + '_type');
+      if (typeSelect && project.type) {
+        typeSelect.value = project.type;
+      }
+      
+      if (project.funding && Array.isArray(project.funding)) {
+        project.funding.forEach(source => {
+          const checkbox = document.querySelector(`input[name="${projectId}_funding"][value="${source}"]`);
+          if (checkbox) {
+            checkbox.checked = true;
+            checkbox.parentElement.classList.add('selected');
+          }
+        });
+      }
+      
+      const yearInput = document.getElementById(projectId + '_year');
+      if (yearInput && project.year) {
+        yearInput.value = project.year;
+      }
+    });
+  }
+
+  showToast('Previous progress loaded', 'info');
+}
+
+// ═══════════════════════════════════════════════════════
+//  LOGOUT
+// ═══════════════════════════════════════════════════════
+function logout() {
+  if (confirm('Are you sure you want to logout? Unsaved changes will be lost.')) {
+    verifiedRow = null;
+    currentLevel = null;
+    selectedVacancies = [];
+    
+    document.getElementById('form-section').classList.remove('show');
+    document.getElementById('auth-section').style.display = 'block';
+    document.getElementById('logoutBtn').classList.remove('show');
+    document.getElementById('uniqueIdInput').value = '';
+    hideAuthError();
+    
+    showToast('Logged out successfully', 'info');
+  }
+}
+
+// ═══════════════════════════════════════════════════════
+//  SUBMIT
+// ═══════════════════════════════════════════════════════
+function submitForm() {
+  const btn = document.getElementById('submitBtn');
+  btn.disabled = true;
+  showOverlay(true);
+
+  fetch(SCRIPT_URL, {
+    method: 'POST',
+    mode: 'cors',
+    redirect: 'follow',
+    body: JSON.stringify(collectPayload())
+  })
+  .then(r => r.text())
+  .then(txt => JSON.parse(txt))
+  .then(data => {
+    showOverlay(false);
+    btn.disabled = false;
+    if (data.success) {
+      const storageKey = 'ges_form_progress_' + verifiedRow.staffId;
+      clearLocalStorage(storageKey);
+      document.getElementById('successDialog').classList.add('show');
+    } else {
+      showToast(data.message || 'Submission failed.', 'error');
+    }
+  })
+  .catch(() => {
+    showOverlay(false);
+    btn.disabled = false;
+    showToast('Network error. Please try again.', 'error');
+  });
+}
+
+// ═══════════════════════════════════════════════════════
+//  SUCCESS DIALOG ACTIONS
+// ═══════════════════════════════════════════════════════
+function closeDialogAndExit() {
+  document.getElementById('successDialog').classList.remove('show');
+  logout();
+}
+
+async function viewAndDownloadData() {
+  document.getElementById('successDialog').classList.remove('show');
+  showOverlay(true);
+  
+  document.querySelectorAll('.section-header').forEach(h => h.classList.add('open'));
+  document.querySelectorAll('.section-body').forEach(b => b.classList.add('open'));
+  
+  await new Promise(resolve => setTimeout(resolve, 500));
+  
+  try {
+    const { jsPDF } = window.jspdf;
+    const pdf = new jsPDF('p', 'mm', 'a4');
+    
+    // Colors matching your theme
+    const colors = {
+      gold: [201, 162, 39],
+      navy: [15, 27, 45],
+      navyMid: [26, 45, 69],
+      cream: [250, 248, 243],
+      textMuted: [107, 122, 141]
+    };
+    
+    // Helper function to check if we need a new page
+    function checkPageBreak(currentY, neededSpace) {
+      if (currentY + neededSpace > 270) {
+        pdf.addPage();
+        return 20;
+      }
+      return currentY;
+    }
+    
+    let yPos = 20;
+    
+    // ========== HEADER ==========
+    pdf.setFillColor(...colors.navy);
+    pdf.rect(0, 0, 210, 45, 'F');
+    
+    pdf.setFontSize(20);
+    pdf.setTextColor(255, 255, 255);
+    pdf.setFont(undefined, 'bold');
+    pdf.text('GHANA EDUCATION SERVICE', 105, 20, { align: 'center' });
+    
+    pdf.setFontSize(10);
+    pdf.setFont(undefined, 'normal');
+    pdf.text('Ahafo Ano South West District', 105, 28, { align: 'center' });
+    
+    pdf.setFontSize(8);
+    pdf.setTextColor(232, 212, 139);
+    pdf.text('Source: Statistics and Planning Unit, 2025/2026', 105, 36, { align: 'center' });
+    
+    pdf.setFillColor(...colors.gold);
+    pdf.rect(0, 42, 210, 3, 'F');
+    
+    yPos = 55;
+    
+    const payload = collectPayload();
+    const config = LEVEL_CONFIG[currentLevel];
+    
+    // ========== SCHOOL INFORMATION TABLE ==========
+    yPos = checkPageBreak(yPos, 60);
+    
+    pdf.setTextColor(...colors.navy);
+    pdf.setFontSize(12);
+    pdf.setFont(undefined, 'bold');
+    pdf.text('SCHOOL INFORMATION', 105, yPos, { align: 'center' });
+    yPos += 8;
+    
+    const schoolInfo = [
+      ['School Name', document.getElementById('disp-school').textContent],
+      ['EMIS Code', document.getElementById('disp-emis').textContent],
+      ['Level', document.getElementById('disp-level').textContent],
+      ['Headteacher', document.getElementById('disp-ht').textContent],
+      ['Staff ID', document.getElementById('disp-sid').textContent],
+      ['Established Date', document.getElementById('disp-est').textContent],
+      ['Submission Date', new Date().toLocaleDateString('en-GB')]
+    ];
+    
+    pdf.autoTable({
+      startY: yPos,
+      head: [],
+      body: schoolInfo,
+      theme: 'grid',
+      styles: {
+        fontSize: 9,
+        cellPadding: 4,
+        lineColor: [221, 214, 200],
+        lineWidth: 0.5
+      },
+      columnStyles: {
+        0: { fontStyle: 'bold', fillColor: [250, 248, 243], cellWidth: 60 },
+        1: { cellWidth: 110 }
+      },
+      margin: { left: 20, right: 20 }
+    });
+    
+    yPos = pdf.lastAutoTable.finalY + 10;
+    
+    // ========== ENROLMENT DATA ==========
+    const enrolmentTableHeight = (config.enrolment.length + 1) * 10 + 20;
+    yPos = checkPageBreak(yPos, enrolmentTableHeight);
+    
+    pdf.setFontSize(12);
+    pdf.setFont(undefined, 'bold');
+    pdf.setTextColor(...colors.navy);
+    pdf.text('ENROLMENT DATA', 105, yPos, { align: 'center' });
+    yPos += 8;
+    
+    const enrolmentData = config.enrolment.map(lvl => {
+      const id = lvl.replace(/\s/g, '');
+      return [
+        lvl,
+        payload[id + '_Boys'] || '0',
+        payload[id + '_Girls'] || '0',
+        payload[id + '_TotalEnrolment'] || '0'
+      ];
+    });
+    
+    pdf.autoTable({
+      startY: yPos,
+      head: [['Level', 'Boys', 'Girls', 'Total']],
+      body: enrolmentData,
+      theme: 'grid',
+      headStyles: {
+        fillColor: colors.navy,
+        textColor: [255, 255, 255],
+        fontStyle: 'bold',
+        fontSize: 9,
+        halign: 'center'
+      },
+      styles: {
+        fontSize: 9,
+        cellPadding: 3,
+        lineColor: [221, 214, 200],
+        lineWidth: 0.5
+      },
+      columnStyles: {
+        0: { cellWidth: 55 },
+        1: { halign: 'center', cellWidth: 35 },
+        2: { halign: 'center', cellWidth: 35 },
+        3: { halign: 'center', fontStyle: 'bold', fillColor: [250, 248, 243], cellWidth: 35 }
+      },
+      margin: { left: 25, right: 25 }
+    });
+    
+    yPos = pdf.lastAutoTable.finalY + 10;
+    
+    // ========== STAFFING DATA ==========
+    const staffingTableHeight = (config.staffing.length + 1) * 10 + 20;
+    yPos = checkPageBreak(yPos, staffingTableHeight);
+    
+    pdf.setFontSize(12);
+    pdf.setFont(undefined, 'bold');
+    pdf.text('STAFFING DATA', 105, yPos, { align: 'center' });
+    yPos += 8;
+    
+    const prefixMap = {
+      'Kindergarten (KG)': 'KG',
+      'Primary': 'Primary',
+      'Junior High School (JHS)': 'JHS'
+    };
+    
+    const staffingData = config.staffing.map(s => {
+      const p = prefixMap[s];
+      return [
+        s,
+        payload[p + '_MaleTrainedTeachers'] || '0',
+        payload[p + '_FemaleTrainedTeachers'] || '0',
+        payload[p + '_TotalTrainedTeachers'] || '0'
+      ];
+    });
+    
+    pdf.autoTable({
+      startY: yPos,
+      head: [['Level', 'Male', 'Female', 'Total']],
+      body: staffingData,
+      theme: 'grid',
+      headStyles: {
+        fillColor: colors.navy,
+        textColor: [255, 255, 255],
+        fontStyle: 'bold',
+        fontSize: 9,
+        halign: 'center'
+      },
+      styles: {
+        fontSize: 9,
+        cellPadding: 3,
+        lineColor: [221, 214, 200],
+        lineWidth: 0.5
+      },
+      columnStyles: {
+        0: { cellWidth: 60 },
+        1: { halign: 'center', cellWidth: 30 },
+        2: { halign: 'center', cellWidth: 30 },
+        3: { halign: 'center', fontStyle: 'bold', fillColor: [250, 248, 243], cellWidth: 30 }
+      },
+      margin: { left: 30, right: 30 }
+    });
+    
+    yPos = pdf.lastAutoTable.finalY + 10;
+    
+    // ========== FURNITURE - KG ==========
+    if (config.furniture.kg.length > 0) {
+      const kgTableHeight = (config.furniture.kg.length + 1) * 10 + 20;
+      yPos = checkPageBreak(yPos, kgTableHeight);
+      
+      pdf.setFontSize(12);
+      pdf.setFont(undefined, 'bold');
+      pdf.text('FURNITURE - KINDERGARTEN', 105, yPos, { align: 'center' });
+      yPos += 8;
+      
+      const kgFurnitureData = config.furniture.kg.map(lvl => {
+        const id = lvl.replace(/\s/g, '');
+        return [
+          lvl,
+          payload[id + '_HexTables'] || '0',
+          payload[id + '_SittingPlaces'] || '0',
+          payload[id + '_WritingPlaces'] || '0'
+        ];
+      });
+      
+      pdf.autoTable({
+        startY: yPos,
+        head: [['Level', 'Hex Tables', 'Sitting', 'Writing']],
+        body: kgFurnitureData,
+        theme: 'grid',
+        headStyles: {
+          fillColor: colors.navy,
+          textColor: [255, 255, 255],
+          fontStyle: 'bold',
+          fontSize: 9,
+          halign: 'center'
+        },
+        styles: {
+          fontSize: 9,
+          cellPadding: 3,
+          lineColor: [221, 214, 200],
+          lineWidth: 0.5
+        },
+        columnStyles: {
+          0: { cellWidth: 40 },
+          1: { halign: 'center', cellWidth: 35 },
+          2: { halign: 'center', cellWidth: 35 },
+          3: { halign: 'center', cellWidth: 35 }
+        },
+        margin: { left: 32.5, right: 32.5 }
+      });
+      
+      yPos = pdf.lastAutoTable.finalY + 10;
+    }
+    
+    // ========== FURNITURE - DESKS ==========
+    if (config.furniture.desk.length > 0) {
+      const deskTableHeight = (config.furniture.desk.length + 1) * 10 + 20;
+      yPos = checkPageBreak(yPos, deskTableHeight);
+      
+      pdf.setFontSize(12);
+      pdf.setFont(undefined, 'bold');
+      pdf.text('FURNITURE - DESKS', 105, yPos, { align: 'center' });
+      yPos += 8;
+      
+      const deskFurnitureData = config.furniture.desk.map(lvl => {
+        const id = lvl.replace(/\s/g, '');
+        return [
+          lvl,
+          payload[id + '_MonoDesks'] || '0',
+          payload[id + '_DualDesks'] || '0'
+        ];
+      });
+      
+      pdf.autoTable({
+        startY: yPos,
+        head: [['Level', 'Mono Desks', 'Dual Desks']],
+        body: deskFurnitureData,
+        theme: 'grid',
+        headStyles: {
+          fillColor: colors.navy,
+          textColor: [255, 255, 255],
+          fontStyle: 'bold',
+          fontSize: 9,
+          halign: 'center'
+        },
+        styles: {
+          fontSize: 9,
+          cellPadding: 3,
+          lineColor: [221, 214, 200],
+          lineWidth: 0.5
+        },
+        columnStyles: {
+          0: { cellWidth: 55 },
+          1: { halign: 'center', cellWidth: 40 },
+          2: { halign: 'center', cellWidth: 40 }
+        },
+        margin: { left: 37.5, right: 37.5 }
+      });
+      
+      yPos = pdf.lastAutoTable.finalY + 10;
+    }
+    
+    // ========== CLASSROOMS ==========
+    const classroomTableHeight = (config.classrooms.length + 2) * 10 + 20;
+    yPos = checkPageBreak(yPos, classroomTableHeight);
+    
+    pdf.setFontSize(12);
+    pdf.setFont(undefined, 'bold');
+    pdf.text('CLASSROOMS', 105, yPos, { align: 'center' });
+    yPos += 8;
+    
+    const classroomData = [];
+    
+    config.classrooms.forEach(c => {
+      classroomData.push([
+        c + ' Level',
+        payload[c + '_PermanentClassrooms'] || '0',
+        payload[c + '_TemporaryClassrooms'] || '0',
+        (parseInt(payload[c + '_PermanentClassrooms'] || 0) + parseInt(payload[c + '_TemporaryClassrooms'] || 0)).toString()
+      ]);
+    });
+    
+    const totalPermanent = config.classrooms.reduce((sum, c) => 
+      sum + (parseInt(payload[c + '_PermanentClassrooms']) || 0), 0);
+    const totalTemporary = config.classrooms.reduce((sum, c) => 
+      sum + (parseInt(payload[c + '_TemporaryClassrooms']) || 0), 0);
+    const grandTotal = totalPermanent + totalTemporary;
+    
+    classroomData.push([
+      'TOTAL',
+      totalPermanent.toString(),
+      totalTemporary.toString(),
+      grandTotal.toString()
+    ]);
+    
+    pdf.autoTable({
+      startY: yPos,
+      head: [['Level', 'Permanent', 'Temporary', 'Total']],
+      body: classroomData,
+      theme: 'grid',
+      headStyles: {
+        fillColor: colors.navy,
+        textColor: [255, 255, 255],
+        fontStyle: 'bold',
+        fontSize: 9,
+        halign: 'center'
+      },
+      styles: {
+        fontSize: 9,
+        cellPadding: 3,
+        lineColor: [221, 214, 200],
+        lineWidth: 0.5
+      },
+      columnStyles: {
+        0: { cellWidth: 50 },
+        1: { halign: 'center', cellWidth: 35 },
+        2: { halign: 'center', cellWidth: 35 },
+        3: { halign: 'center', fontStyle: 'bold', fillColor: [250, 248, 243], cellWidth: 35 }
+      },
+      margin: { left: 27.5, right: 27.5 },
+      didParseCell: function(data) {
+        if (data.row.index === classroomData.length - 1) {
+          data.cell.styles.fontStyle = 'bold';
+          data.cell.styles.fillColor = [250, 248, 243];
+        }
+      }
+    });
+    
+    yPos = pdf.lastAutoTable.finalY + 10;
+    
+    // ========== VACANCIES ==========
+    if (selectedVacancies.length > 0) {
+      const vacancyTableHeight = (selectedVacancies.length + 1) * 10 + 20;
+      yPos = checkPageBreak(yPos, vacancyTableHeight);
+      
+      pdf.setFontSize(12);
+      pdf.setFont(undefined, 'bold');
+      pdf.text('TEACHING VACANCIES', 105, yPos, { align: 'center' });
+      yPos += 8;
+      
+      const vacancyRows = selectedVacancies.map(v => [v]);
+      
+      pdf.autoTable({
+        startY: yPos,
+        head: [['Position/Level']],
+        body: vacancyRows,
+        theme: 'grid',
+        headStyles: {
+          fillColor: [214, 57, 70],
+          textColor: [255, 255, 255],
+          fontStyle: 'bold',
+          fontSize: 9,
+          halign: 'center'
+        },
+        styles: {
+          fontSize: 9,
+          cellPadding: 3,
+          lineColor: [221, 214, 200],
+          lineWidth: 0.5
+        },
+        columnStyles: {
+          0: { cellWidth: 120 }
+        },
+        margin: { left: 45, right: 45 }
+      });
+      
+      yPos = pdf.lastAutoTable.finalY + 10;
+    }
+    
+    // ========== STAFF ACCOMMODATION ==========
+    const accomTableHeight = payload.hasStaffAccommodation === 'Yes' ? 50 : 30;
+    yPos = checkPageBreak(yPos, accomTableHeight);
+    
+    pdf.setFontSize(12);
+    pdf.setFont(undefined, 'bold');
+    pdf.text('STAFF ACCOMMODATION', 105, yPos, { align: 'center' });
+    yPos += 8;
+    
+    const accomData = [
+      ['Has Staff Accommodation', payload.hasStaffAccommodation || 'Not specified']
+    ];
+    
+    if (payload.hasStaffAccommodation === 'Yes') {
+      accomData.push(
+        ['Total Teachers Occupying', payload.staffAccom_Total || '0'],
+        ['Male Teachers', payload.staffAccom_Male || '0'],
+        ['Female Teachers', payload.staffAccom_Female || '0']
+      );
+    }
+    
+    pdf.autoTable({
+      startY: yPos,
+      body: accomData,
+      theme: 'grid',
+      styles: {
+        fontSize: 9,
+        cellPadding: 4,
+        lineColor: [221, 214, 200],
+        lineWidth: 0.5
+      },
+      columnStyles: {
+        0: { fontStyle: 'bold', fillColor: [250, 248, 243], cellWidth: 75 },
+        1: { cellWidth: 75, halign: 'center' }
+      },
+      margin: { left: 30, right: 30 }
+    });
+    
+    yPos = pdf.lastAutoTable.finalY + 10;
+    
+    // ========== WATER SUPPLY ==========
+    const waterTableHeight = payload.hasWaterAccess === 'Yes' ? 60 : 30;
+    yPos = checkPageBreak(yPos, waterTableHeight);
+    
+    pdf.setFontSize(12);
+    pdf.setFont(undefined, 'bold');
+    pdf.text('WATER SUPPLY', 105, yPos, { align: 'center' });
+    yPos += 8;
+    
+    const waterData = [
+      ['Has Access to Water', payload.hasWaterAccess || 'Not specified']
+    ];
+    
+    if (payload.hasWaterAccess === 'Yes') {
+      waterData.push(
+        ['Water Ownership', payload.waterOwnership || 'Not specified'],
+        ['Shared with Nearby School', payload.waterShared || 'Not specified'],
+        ['Water Source Types', (payload.waterSourceTypes && payload.waterSourceTypes.length > 0) ? payload.waterSourceTypes.join(', ') : 'Not specified']
+      );
+    }
+    
+    pdf.autoTable({
+      startY: yPos,
+      body: waterData,
+      theme: 'grid',
+      styles: {
+        fontSize: 9,
+        cellPadding: 4,
+        lineColor: [221, 214, 200],
+        lineWidth: 0.5
+      },
+      columnStyles: {
+        0: { fontStyle: 'bold', fillColor: [250, 248, 243], cellWidth: 75 },
+        1: { cellWidth: 75 }
+      },
+      margin: { left: 30, right: 30 }
+    });
+    
+    yPos = pdf.lastAutoTable.finalY + 10;
+    
+    // ========== SANITATION - TOILETS ==========
+    yPos = checkPageBreak(yPos, 70);
+    
+    pdf.setFontSize(12);
+    pdf.setFont(undefined, 'bold');
+    pdf.text('SANITATION FACILITIES', 105, yPos, { align: 'center' });
+    yPos += 8;
+    
+    const toiletData = [
+      ['Owns Toilet Facilities', payload.ownsToilet || 'Not specified'],
+      ['Learner Toilet Access', payload.learnersToiletAccess || 'Not specified'],
+      ['Toilet Cubicles - Boys', payload.toiletCubicles_Boys || '0'],
+      ['Toilet Cubicles - Girls', payload.toiletCubicles_Girls || '0']
+    ];
+    
+    pdf.autoTable({
+      startY: yPos,
+      head: [['Toilet Facilities', '']],
+      body: toiletData,
+      theme: 'grid',
+      headStyles: {
+        fillColor: colors.navy,
+        textColor: [255, 255, 255],
+        fontStyle: 'bold',
+        fontSize: 9,
+        halign: 'center'
+      },
+      styles: {
+        fontSize: 9,
+        cellPadding: 4,
+        lineColor: [221, 214, 200],
+        lineWidth: 0.5
+      },
+      columnStyles: {
+        0: { fontStyle: 'bold', fillColor: [250, 248, 243], cellWidth: 75 },
+        1: { cellWidth: 75, halign: 'center' }
+      },
+      margin: { left: 30, right: 30 }
+    });
+    
+    yPos = pdf.lastAutoTable.finalY + 5;
+    
+    // ========== SANITATION - URINALS ==========
+    yPos = checkPageBreak(yPos, 60);
+    
+    const urinalData = [
+      ['Owns Urinal Facilities', payload.ownsUrinal || 'Not specified'],
+      ['Learner Urinal Access', payload.learnersUrinalAccess || 'Not specified'],
+      ['Urinal Stations - Boys', payload.urinalStations_Boys || '0'],
+      ['Urinal Stations - Girls', payload.urinalStations_Girls || '0']
+    ];
+    
+    pdf.autoTable({
+      startY: yPos,
+      head: [['Urinal Facilities', '']],
+      body: urinalData,
+      theme: 'grid',
+      headStyles: {
+        fillColor: colors.navy,
+        textColor: [255, 255, 255],
+        fontStyle: 'bold',
+        fontSize: 9,
+        halign: 'center'
+      },
+      styles: {
+        fontSize: 9,
+        cellPadding: 4,
+        lineColor: [221, 214, 200],
+        lineWidth: 0.5
+      },
+      columnStyles: {
+        0: { fontStyle: 'bold', fillColor: [250, 248, 243], cellWidth: 75 },
+        1: { cellWidth: 75, halign: 'center' }
+      },
+      margin: { left: 30, right: 30 }
+    });
+    
+    yPos = pdf.lastAutoTable.finalY + 10;
+    
+    // ========== ONGOING PROJECTS ==========
+  // ========== ONGOING PROJECTS ==========
+    if (payload.hasOngoingProjects === 'Yes' && payload.projects && payload.projects.length > 0) {
+      const projectTableHeight = (payload.projects.length * 3 + 2) * 10 + 20;
+      yPos = checkPageBreak(yPos, projectTableHeight);
+      
+      pdf.setFontSize(12);
+      pdf.setFont(undefined, 'bold');
+      pdf.text('ONGOING PROJECTS', 105, yPos, { align: 'center' });
+      yPos += 8;
+      
+      const projectData = payload.projects.map((project, index) => [
+        `Project ${index + 1}`,
+        project.type || 'Not specified',
+        (project.funding && project.funding.length > 0) ? project.funding.join(', ') : 'Not specified',
+        project.year || 'Not specified'
+      ]);
+      
+      pdf.autoTable({
+        startY: yPos,
+        head: [['#', 'Project Type', 'Funding Sources', 'Start Year']],
+        body: projectData,
+        theme: 'grid',
+        headStyles: {
+          fillColor: colors.navy,
+          textColor: [255, 255, 255],
+          fontStyle: 'bold',
+          fontSize: 9,
+          halign: 'center'
+        },
+        styles: {
+          fontSize: 8,
+          cellPadding: 3,
+          lineColor: [221, 214, 200],
+          lineWidth: 0.5
+        },
+        columnStyles: {
+          0: { cellWidth: 20, halign: 'center', fontStyle: 'bold' },
+          1: { cellWidth: 60 },
+          2: { cellWidth: 60 },
+          3: { cellWidth: 25, halign: 'center' }
+        },
+        margin: { left: 22.5, right: 22.5 }
+      });
+      
+      yPos = pdf.lastAutoTable.finalY + 10;
+    }
+    
+    // ========== FACILITIES & PROGRAMS ==========
+    const facilitiesTableHeight = payload.electricitySource ? 110 : 100;
+    yPos = checkPageBreak(yPos, facilitiesTableHeight);
+    
+    pdf.setFontSize(12);
+    pdf.setFont(undefined, 'bold');
+    pdf.text('FACILITIES & PROGRAMS', 105, yPos, { align: 'center' });
+    yPos += 8;
+    
+    const facilitiesData = [
+      ['Staff Common Room', payload.hasStaffCommonRoom || 'Not specified'],
+      ['ICT Laboratory', payload.hasICTLab || 'Not specified'],
+      ['Library', payload.hasLibrary || 'Not specified'],
+      ['School Farm', payload.hasSchoolFarm || 'Not specified'],
+      ['GALOP Beneficiary', payload.isGALOP || 'Not specified'],
+      ['School Feeding Programme', payload.isSchoolFeeding || 'Not specified'],
+      ['Electricity Access', payload.hasElectricity || 'Not specified']
+    ];
+    
+    if (payload.electricitySource) {
+      facilitiesData.push(['Electricity Source', payload.electricitySource]);
+    }
+    
+    pdf.autoTable({
+      startY: yPos,
+      body: facilitiesData,
+      theme: 'grid',
+      styles: {
+        fontSize: 9,
+        cellPadding: 4,
+        lineColor: [221, 214, 200],
+        lineWidth: 0.5
+      },
+      columnStyles: {
+        0: { fontStyle: 'bold', fillColor: [250, 248, 243], cellWidth: 75 },
+        1: { cellWidth: 75, halign: 'center' }
+      },
+      margin: { left: 30, right: 30 }
+    });
+    
+    // ========== FOOTER ON ALL PAGES ==========
+    const pageCount = pdf.internal.getNumberOfPages();
+    for (let i = 1; i <= pageCount; i++) {
+      pdf.setPage(i);
+      pdf.setFontSize(8);
+      pdf.setTextColor(...colors.textMuted);
+      pdf.text(`Page ${i} of ${pageCount}`, 105, 285, { align: 'center' });
+      pdf.text('Ghana Education Service - Ahafo Ano South West District', 105, 290, { align: 'center' });
+      
+      pdf.setFontSize(7);
+      pdf.text('System by: Statistics and Planning Unit', 105, 294, { align: 'center' });
+    }
+    
+    // Save PDF
+    const fileName = `GES_Report_${verifiedRow.staffId}_${new Date().toISOString().split('T')[0]}.pdf`;
+    pdf.save(fileName);
+    
+    showOverlay(false);
+    showToast('Professional PDF downloaded successfully!', 'success');
+    
+  } catch (error) {
+    showOverlay(false);
+    console.error('PDF generation error:', error);
+    showToast('Failed to generate PDF: ' + error.message, 'error');
+  }
+}
+// ═══════════════════════════════════════════════════════
+//  TOAST & OVERLAY
+// ═══════════════════════════════════════════════════════
+let toastTimer;
+function showToast(msg, type='success') {
+  const t = document.getElementById('toast');
+  document.getElementById('toastMsg').textContent = msg;
+  t.className = 'toast ' + type + ' show';
+  
+  const iconMap = {
+    success: '<path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/>',
+    error: '<circle cx="12" cy="12" r="10"/><path d="M12 8v4m0 4h.01"/>',
+    info: '<circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/>'
+  };
+  
+  t.querySelector('svg').innerHTML = iconMap[type] || iconMap.success;
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => t.classList.remove('show'), 3200);
+}
+
+function showOverlay(s) { 
+  document.getElementById('loadingOverlay').classList.toggle('show', s); 
+}
+</script>
+</body>
+</html>
