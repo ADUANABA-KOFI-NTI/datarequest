@@ -2035,7 +2035,19 @@ function loadSavedProgress(staffId) {
   const storageKey = 'ges_form_progress_' + staffId;
   const savedData = getFromLocalStorage(storageKey);
   
+  // If no saved data, just return silently
   if (!savedData) return;
+
+  // Check if there's actually meaningful data to restore
+  // (not just empty action/staffId/level fields)
+  const hasActualData = Object.keys(savedData).some(key => {
+    if (['action', 'staffId', 'level'].includes(key)) return false;
+    if (Array.isArray(savedData[key])) return savedData[key].length > 0;
+    return savedData[key] !== '' && savedData[key] !== null && savedData[key] !== undefined;
+  });
+
+  // If no actual data to restore, return silently
+  if (!hasActualData) return;
 
   Object.keys(savedData).forEach(key => {
     if (['action', 'staffId', 'level', 'vacancies', 'waterSourceTypes', 'projectTypes', 'projectFunding'].includes(key)) return;
@@ -2076,7 +2088,6 @@ function loadSavedProgress(staffId) {
   });
 
   // Restore checkbox arrays
- // Restore checkbox arrays
   ['waterSourceTypes'].forEach(key => {
     if (savedData[key] && Array.isArray(savedData[key])) {
       savedData[key].forEach(value => {
@@ -2102,7 +2113,7 @@ function loadSavedProgress(staffId) {
     });
   }
 
-// Restore projects
+  // Restore projects
   if (savedData.hasOngoingProjects === 'Yes' && savedData.projects && Array.isArray(savedData.projects)) {
     savedData.projects.forEach((project, index) => {
       addProject();
@@ -2130,6 +2141,7 @@ function loadSavedProgress(staffId) {
     });
   }
 
+  // Only show toast if we actually restored data
   showToast('Previous progress loaded', 'info');
 }
 // ═══════════════════════════════════════════════════════
@@ -2923,4 +2935,5 @@ function showOverlay(s) {
 </body>
 
 </html>
+
 
