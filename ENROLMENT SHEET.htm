@@ -104,7 +104,36 @@
   }
   .logout-btn.show { display: flex; }
   .logout-btn svg { width: 16px; height: 16px; }
-
+/* ─── SAVE INDICATOR ─── */
+  .save-indicator {
+    position: fixed;
+    top: 20px;
+    left: 20px;
+    background: rgba(42, 157, 92, 0.15);
+    backdrop-filter: blur(10px);
+    color: var(--green);
+    border: 1px solid rgba(42, 157, 92, 0.3);
+    padding: 10px 20px;
+    border-radius: 8px;
+    font-size: 0.75rem;
+    font-weight: 500;
+    display: none;
+    align-items: center;
+    gap: 8px;
+    z-index: 100;
+    opacity: 0.7;
+    transition: opacity .3s;
+  }
+  .save-indicator.show { display: flex; }
+  .save-indicator::before {
+    content: '●';
+    font-size: 0.6rem;
+    animation: pulse 2s ease-in-out infinite;
+  }
+  @keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.3; }
+  }
   /* ─── MAIN WRAPPER ─── */
   .main-wrap { max-width:780px; margin:0 auto; padding: 32px 18px 60px; }
 
@@ -603,7 +632,7 @@
 </head>
 <body>
 
-<!-- ══════════════════ LOGOUT BUTTON ══════════════════ -->
+  <!-- ══════════════════ LOGOUT BUTTON ══════════════════ -->
 <button class="logout-btn" id="logoutBtn" onclick="logout()">
   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
     <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
@@ -612,6 +641,11 @@
   </svg>
   Logout
 </button>
+
+<!-- ══════════════════ SAVE INDICATOR ══════════════════ -->
+<div class="save-indicator" id="saveIndicator">
+  Auto-save enabled
+</div>
 
 <!-- ══════════════════ TOP BANNER ══════════════════ -->
 <header class="top-banner">
@@ -1164,7 +1198,7 @@
 
       <!-- ACTION BUTTONS -->
       <div class="action-buttons">
-        <button class="btn-save" id="saveBtn" onclick="saveProgress()">
+       <button class="btn-save" id="saveBtn" onclick="saveProgress(true)">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
             <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/>
             <polyline points="17 21 17 13 7 13 7 21"/>
@@ -1225,7 +1259,11 @@
 //  SCRIPT URL  
 // ═══════════════════════════════════════════════════════
 const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyM7OGIZa2EFqBRWeIaxn6tQPPyBMqQTasFkm5Zx0kTgbYvaWJ8Ad1NQMUQElLzI-QP/exec';
-
+// ═══════════════════════════════════════════════════════
+//  AUTO-SAVE CONFIGURATION
+// ═══════════════════════════════════════════════════════
+let autoSaveTimer = null;
+const AUTO_SAVE_DELAY = 2000; // Save 2 seconds after user stops typing
 // ═══════════════════════════════════════════════════════
 //  VACANCY OPTIONS BY LEVEL
 // ═══════════════════════════════════════════════════════
@@ -1799,9 +1837,13 @@ function showForm(data) {
     return;
   }
 
-  document.getElementById('auth-section').style.display = 'none';
+ document.getElementById('auth-section').style.display = 'none';
   document.getElementById('form-section').classList.add('show');
   document.getElementById('logoutBtn').classList.add('show');
+  document.getElementById('saveIndicator').classList.add('show');
+  
+  // Initialize auto-save listeners after form is shown
+  initializeAutoSave();
 }
 
 function showAuthError(msg) {
@@ -1928,9 +1970,11 @@ function collectPayload() {
 // ═══════════════════════════════════════════════════════
 //  SAVE & LOAD PROGRESS
 // ═══════════════════════════════════════════════════════
-function saveProgress() {
+function saveProgress(showNotification = true) {
   if (!verifiedRow || !currentLevel) {
-    showToast('Please verify your ID first', 'error');
+    if (showNotification) {
+      showToast('Please verify your ID first', 'error');
+    }
     return;
   }
 
@@ -1938,9 +1982,38 @@ function saveProgress() {
   const storageKey = 'ges_form_progress_' + verifiedRow.staffId;
   
   if (saveToLocalStorage(storageKey, payload)) {
-    showToast('Progress saved successfully!', 'info');
+    if (showNotification) {
+      showToast('Progress saved successfully!', 'info');
+    }
+    // Update last saved timestamp
+    const timestamp = new Date().toLocaleTimeString('en-GB', { 
+      hour: '2-digit', 
+      minute: '2-digit' 
+    });
+    updateSaveIndicator(timestamp);
   } else {
-    showToast('Failed to save progress', 'error');
+    if (showNotification) {
+      showToast('Failed to save progress', 'error');
+    }
+  }
+}
+
+// Auto-save function (silent background save)
+function autoSave() {
+  clearTimeout(autoSaveTimer);
+  autoSaveTimer = setTimeout(() => {
+    saveProgress(false); // false = don't show notification
+  }, AUTO_SAVE_DELAY);
+}
+
+function updateSaveIndicator(timestamp) {
+  const indicator = document.getElementById('saveIndicator');
+  if (indicator) {
+    indicator.textContent = 'Last saved: ' + timestamp;
+    indicator.style.opacity = '1';
+    setTimeout(() => {
+      indicator.style.opacity = '0.7';
+    }, 2000);
   }
 }
 
@@ -2045,12 +2118,35 @@ function loadSavedProgress(staffId) {
 
   showToast('Previous progress loaded', 'info');
 }
-
+// ═══════════════════════════════════════════════════════
+//  INITIALIZE AUTO-SAVE LISTENERS
+// ═══════════════════════════════════════════════════════
+function initializeAutoSave() {
+  // Auto-save on all input changes
+  document.getElementById('mainCard').addEventListener('input', function(e) {
+    if (e.target.matches('input, select')) {
+      autoSave();
+    }
+  });
+  
+  // Auto-save on radio/checkbox changes
+  document.getElementById('mainCard').addEventListener('change', function(e) {
+    if (e.target.matches('input[type="radio"], input[type="checkbox"]')) {
+      autoSave();
+    }
+  });
+  
+  // Show initial save indicator
+  updateSaveIndicator('ready');
+}
 // ═══════════════════════════════════════════════════════
 //  LOGOUT
 // ═══════════════════════════════════════════════════════
 function logout() {
-  if (confirm('Are you sure you want to logout? Unsaved changes will be lost.')) {
+  if (confirm('Are you sure you want to logout? All data is saved locally and can be resumed later.')) {
+    // Clear auto-save timer
+    clearTimeout(autoSaveTimer);
+    
     verifiedRow = null;
     currentLevel = null;
     selectedVacancies = [];
@@ -2058,6 +2154,7 @@ function logout() {
     document.getElementById('form-section').classList.remove('show');
     document.getElementById('auth-section').style.display = 'block';
     document.getElementById('logoutBtn').classList.remove('show');
+    document.getElementById('saveIndicator').classList.remove('show');
     document.getElementById('uniqueIdInput').value = '';
     hideAuthError();
     
@@ -2810,4 +2907,5 @@ function showOverlay(s) {
 }
 </script>
 </body>
+
 </html>
