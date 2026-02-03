@@ -2475,8 +2475,32 @@ function submitForm() {
   const btn = document.getElementById('submitBtn');
   btn.disabled = true;
   showOverlay(true);
-
+  
   fetch(SCRIPT_URL, {
+    method: 'POST',
+    mode: 'cors',
+    redirect: 'follow',
+    body: JSON.stringify(collectPayload())
+  })
+  .then(r => r.text())
+  .then(txt => JSON.parse(txt))
+  .then(data => {
+    showOverlay(false);
+    btn.disabled = false;
+    if (data.success) {
+      const storageKey = 'ges_form_progress_' + verifiedRow.staffId;
+      clearLocalStorage(storageKey);
+      document.getElementById('successDialog').classList.add('show');
+    } else {
+      showToast(data.message || 'Submission failed.', 'error');
+    }
+  })
+  .catch(() => {
+    showOverlay(false);
+    btn.disabled = false;
+    showToast('Network error. Please try again.', 'error');
+  });
+}
 // ═══════════════════════════════════════════════════════
 //  SUCCESS DIALOG ACTIONS
 // ═══════════════════════════════════════════════════════
@@ -3213,6 +3237,7 @@ function showOverlay(s) {
 </body>
 
 </html>
+
 
 
 
