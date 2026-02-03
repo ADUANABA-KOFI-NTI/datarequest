@@ -1530,6 +1530,20 @@ document.addEventListener('change', function(e) {
     }
   }
 });
+// ═══════════════════════════════════════════════════════
+//  PREVENT ACCIDENTAL PAGE REFRESH/CLOSE
+// ═══════════════════════════════════════════════════════
+window.addEventListener('beforeunload', function(e) {
+  // Only show warning if user is logged in (form is visible)
+  if (verifiedRow && currentLevel) {
+    // Standard way to show confirmation dialog
+    e.preventDefault();
+    // Chrome requires returnValue to be set
+    e.returnValue = '';
+    // Some browsers show this message, others show a generic message
+    return 'You have unsaved changes. All data is auto-saved locally. Are you sure you want to leave?';
+  }
+});
 
 // ═══════════════════════════════════════════════════════
 //  FIELD BUILDERS (DYNAMIC BASED ON LEVEL)
@@ -2909,3 +2923,4 @@ function showOverlay(s) {
 </body>
 
 </html>
+
