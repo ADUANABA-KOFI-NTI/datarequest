@@ -1214,7 +1214,41 @@
     </div>
   </div>
 </div>
-
+<!-- VALIDATION ERROR DIALOG -->
+<div class="dialog-overlay" id="validationDialog">
+  <div class="dialog" style="max-width: 600px;">
+    <div class="dialog-icon" style="background: linear-gradient(135deg, var(--red), #b02a37);">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="12" cy="12" r="10"/>
+        <line x1="12" y1="8" x2="12" y2="12"/>
+        <line x1="12" y1="16" x2="12.01" y2="16"/>
+      </svg>
+    </div>
+    <h2 class="dialog-title">Incomplete Form</h2>
+    <p class="dialog-message">Please complete all required fields before submitting:</p>
+    
+    <div id="validationErrorsList" style="
+      max-height: 300px;
+      overflow-y: auto;
+      background: var(--cream-dark);
+      border-radius: 8px;
+      padding: 16px;
+      margin-bottom: 20px;
+      text-align: left;
+    ">
+      <!-- Errors will be inserted here -->
+    </div>
+    
+    <div class="dialog-actions">
+      <button class="dialog-btn primary" onclick="closeValidationDialog()" style="flex: none; width: 100%;">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="20 6 9 17 4 12"/>
+        </svg>
+        OK, I'll Complete The Form
+      </button>
+    </div>
+  </div>
+</div>
 <!-- SUCCESS DIALOG -->
 <div class="dialog-overlay" id="successDialog">
   <div class="dialog">
@@ -2187,41 +2221,262 @@ function logout() {
     showToast('Logged out successfully', 'info');
   }
 }
+// ═══════════════════════════════════════════════════════
+//  FORM VALIDATION
+// ═══════════════════════════════════════════════════════
+function validateForm() {
+  const errors = [];
+  const config = LEVEL_CONFIG[currentLevel];
+  
+  if (!config) {
+    errors.push('Invalid school level configuration');
+    return errors;
+  }
 
+  // 1. VALIDATE ENROLMENT (Boys and Girls for each level)
+  config.enrolment.forEach(lvl => {
+    const id = lvl.replace(/\s/g, '');
+    const boys = document.getElementById(id + '_Boys');
+    const girls = document.getElementById(id + '_Girls');
+    
+    if (!boys || boys.value === '' || boys.value === null) {
+      errors.push(`${lvl} - Boys enrolment is required`);
+    }
+    if (!girls || girls.value === '' || girls.value === null) {
+      errors.push(`${lvl} - Girls enrolment is required`);
+    }
+  });
+
+  // 2. VALIDATE STAFFING (Male and Female teachers)
+  const prefixMap = {
+    'Kindergarten (KG)': 'KG',
+    'Primary': 'Primary',
+    'Junior High School (JHS)': 'JHS'
+  };
+  
+  config.staffing.forEach(s => {
+    const p = prefixMap[s];
+    const male = document.getElementById(p + '_MaleTrainedTeachers');
+    const female = document.getElementById(p + '_FemaleTrainedTeachers');
+    
+    if (!male || male.value === '' || male.value === null) {
+      errors.push(`${s} - Male trained teachers count is required`);
+    }
+    if (!female || female.value === '' || female.value === null) {
+      errors.push(`${s} - Female trained teachers count is required`);
+    }
+  });
+
+  // 3. VALIDATE FURNITURE - KG
+  config.furniture.kg.forEach(lvl => {
+    const id = lvl.replace(/\s/g, '');
+    const hexTables = document.getElementById(id + '_HexTables');
+    const sitting = document.getElementById(id + '_SittingPlaces');
+    const writing = document.getElementById(id + '_WritingPlaces');
+    
+    if (!hexTables || hexTables.value === '') {
+      errors.push(`${lvl} - Hexagonal tables count is required`);
+    }
+    if (!sitting || sitting.value === '') {
+      errors.push(`${lvl} - Sitting places count is required`);
+    }
+    if (!writing || writing.value === '') {
+      errors.push(`${lvl} - Writing places count is required`);
+    }
+  });
+
+  // 4. VALIDATE FURNITURE - DESKS
+  config.furniture.desk.forEach(lvl => {
+    const id = lvl.replace(/\s/g, '');
+    const mono = document.getElementById(id + '_MonoDesks');
+    const dual = document.getElementById(id + '_DualDesks');
+    
+    if (!mono || mono.value === '') {
+      errors.push(`${lvl} - Mono desks count is required`);
+    }
+    if (!dual || dual.value === '') {
+      errors.push(`${lvl} - Dual desks count is required`);
+    }
+  });
+
+  // 5. VALIDATE CLASSROOMS
+  const numClassrooms = document.getElementById('numberOfClassrooms');
+  if (!numClassrooms || numClassrooms.value === '') {
+    errors.push('Total number of classrooms is required');
+  }
+
+  config.classrooms.forEach(c => {
+    const perm = document.getElementById(c + '_PermanentClassrooms');
+    const temp = document.getElementById(c + '_TemporaryClassrooms');
+    
+    if (!perm || perm.value === '') {
+      errors.push(`${c} - Permanent classrooms count is required`);
+    }
+    if (!temp || temp.value === '') {
+      errors.push(`${c} - Temporary classrooms count is required`);
+    }
+  });
+
+  // 6. VALIDATE STAFF ACCOMMODATION
+  const hasStaffAccom = getRadioValue('hasStaffAccommodation');
+  if (!hasStaffAccom) {
+    errors.push('Please indicate if the school has staff accommodation');
+  } else if (hasStaffAccom === 'Yes') {
+    const total = document.getElementById('staffAccom_Total');
+    const male = document.getElementById('staffAccom_Male');
+    const female = document.getElementById('staffAccom_Female');
+    
+    if (!total || total.value === '') {
+      errors.push('Total teachers occupying accommodation is required');
+    }
+    if (!male || male.value === '') {
+      errors.push('Male teachers in accommodation is required');
+    }
+    if (!female || female.value === '') {
+      errors.push('Female teachers in accommodation is required');
+    }
+  }
+
+  // 7. VALIDATE WATER SUPPLY
+  const hasWater = getRadioValue('hasWaterAccess');
+  if (!hasWater) {
+    errors.push('Please indicate if the school has access to water');
+  } else if (hasWater === 'Yes') {
+    const ownership = getRadioValue('waterOwnership');
+    const shared = getRadioValue('waterShared');
+    const sources = getCheckboxValues('waterSourceTypes');
+    
+    if (!ownership) {
+      errors.push('Water source ownership is required');
+    }
+    if (!shared) {
+      errors.push('Please indicate if water source is shared');
+    }
+    if (sources.length === 0) {
+      errors.push('Please select at least one water source type');
+    }
+  }
+
+  // 8. VALIDATE SANITATION - TOILETS
+  const ownsToilet = getRadioValue('ownsToilet');
+  const toiletAccess = getRadioValue('learnersToiletAccess');
+  const toiletBoys = document.getElementById('toiletCubicles_Boys');
+  const toiletGirls = document.getElementById('toiletCubicles_Girls');
+  
+  if (!ownsToilet) {
+    errors.push('Please indicate if the school owns toilet facilities');
+  }
+  if (!toiletAccess) {
+    errors.push('Please indicate learners\' toilet access');
+  }
+  if (!toiletBoys || toiletBoys.value === '') {
+    errors.push('Toilet cubicles for boys is required');
+  }
+  if (!toiletGirls || toiletGirls.value === '') {
+    errors.push('Toilet cubicles for girls is required');
+  }
+
+  // 9. VALIDATE SANITATION - URINALS
+  const ownsUrinal = getRadioValue('ownsUrinal');
+  const urinalAccess = getRadioValue('learnersUrinalAccess');
+  const urinalBoys = document.getElementById('urinalStations_Boys');
+  const urinalGirls = document.getElementById('urinalStations_Girls');
+  
+  if (!ownsUrinal) {
+    errors.push('Please indicate if the school owns urinal facilities');
+  }
+  if (!urinalAccess) {
+    errors.push('Please indicate learners\' urinal access');
+  }
+  if (!urinalBoys || urinalBoys.value === '') {
+    errors.push('Urinal stations for boys is required');
+  }
+  if (!urinalGirls || urinalGirls.value === '') {
+    errors.push('Urinal stations for girls is required');
+  }
+
+  // 10. VALIDATE ONGOING PROJECTS
+  const hasProjects = getRadioValue('hasOngoingProjects');
+  if (!hasProjects) {
+    errors.push('Please indicate if the school has ongoing projects');
+  } else if (hasProjects === 'Yes') {
+    const projectCards = document.querySelectorAll('.project-card');
+    if (projectCards.length === 0) {
+      errors.push('Please add at least one project or select "No" for ongoing projects');
+    } else {
+      projectCards.forEach((card, index) => {
+        const projectId = card.id;
+        const typeSelect = document.getElementById(projectId + '_type');
+        const fundingCheckboxes = document.querySelectorAll(`input[name="${projectId}_funding"]:checked`);
+        
+        if (!typeSelect || !typeSelect.value) {
+          errors.push(`Project ${index + 1} - Project type is required`);
+        }
+        if (fundingCheckboxes.length === 0) {
+          errors.push(`Project ${index + 1} - At least one funding source is required`);
+        }
+      });
+    }
+  }
+
+  // 11. VALIDATE TEACHERS' FURNITURE
+  const teachersDesks = document.getElementById('teachersDesks');
+  const teachersChairs = document.getElementById('teachersChairs');
+  
+  if (!teachersDesks || teachersDesks.value === '') {
+    errors.push('Number of teachers\' desks is required');
+  }
+  if (!teachersChairs || teachersChairs.value === '') {
+    errors.push('Number of teachers\' chairs is required');
+  }
+
+  // 12. VALIDATE FACILITIES & PROGRAMS
+  const facilityQuestions = [
+    { name: 'hasStaffCommonRoom', label: 'Staff common room' },
+    { name: 'hasICTLab', label: 'ICT laboratory' },
+    { name: 'hasLibrary', label: 'Library' },
+    { name: 'hasSchoolFarm', label: 'School farm' },
+    { name: 'isGALOP', label: 'GALOP beneficiary status' },
+    { name: 'isSchoolFeeding', label: 'School Feeding Programme status' },
+    { name: 'hasElectricity', label: 'Electricity access' }
+  ];
+  
+  facilityQuestions.forEach(q => {
+    const value = getRadioValue(q.name);
+    if (!value) {
+      errors.push(`Please indicate if the school has ${q.label}`);
+    }
+  });
+
+  // 13. VALIDATE ELECTRICITY SOURCE (if applicable)
+  const hasElec = getRadioValue('hasElectricity');
+  if (hasElec === 'Yes') {
+    const elecSource = getRadioValue('electricitySource');
+    if (!elecSource) {
+      errors.push('Please specify the electricity source');
+    }
+  }
+
+  return errors;
+}
 // ═══════════════════════════════════════════════════════
 //  SUBMIT
 // ═══════════════════════════════════════════════════════
 function submitForm() {
+  // Validate form before submission
+  const validationErrors = validateForm();
+  
+  if (validationErrors.length > 0) {
+    // Show all errors in a scrollable dialog
+    showValidationErrors(validationErrors);
+    return;
+  }
+
   const btn = document.getElementById('submitBtn');
   btn.disabled = true;
   showOverlay(true);
 
   fetch(SCRIPT_URL, {
-    method: 'POST',
-    mode: 'cors',
-    redirect: 'follow',
-    body: JSON.stringify(collectPayload())
-  })
-  .then(r => r.text())
-  .then(txt => JSON.parse(txt))
-  .then(data => {
-    showOverlay(false);
-    btn.disabled = false;
-    if (data.success) {
-      const storageKey = 'ges_form_progress_' + verifiedRow.staffId;
-      clearLocalStorage(storageKey);
-      document.getElementById('successDialog').classList.add('show');
-    } else {
-      showToast(data.message || 'Submission failed.', 'error');
-    }
-  })
-  .catch(() => {
-    showOverlay(false);
-    btn.disabled = false;
-    showToast('Network error. Please try again.', 'error');
-  });
-}
-
 // ═══════════════════════════════════════════════════════
 //  SUCCESS DIALOG ACTIONS
 // ═══════════════════════════════════════════════════════
@@ -2908,6 +3163,29 @@ async function viewAndDownloadData() {
     showToast('Failed to generate PDF: ' + error.message, 'error');
   }
 }
+
+  // ═══════════════════════════════════════════════════════
+//  VALIDATION ERROR DISPLAY
+// ═══════════════════════════════════════════════════════
+function showValidationErrors(errors) {
+  const errorsList = document.getElementById('validationErrorsList');
+  
+  let html = '<ul style="margin: 0; padding-left: 20px; line-height: 1.8;">';
+  errors.forEach(error => {
+    html += `<li style="color: var(--red); font-size: 0.85rem; margin-bottom: 8px;">${error}</li>`;
+  });
+  html += '</ul>';
+  
+  errorsList.innerHTML = html;
+  document.getElementById('validationDialog').classList.add('show');
+  
+  // Also show a toast
+  showToast(`Please complete ${errors.length} required field${errors.length > 1 ? 's' : ''}`, 'error');
+}
+
+function closeValidationDialog() {
+  document.getElementById('validationDialog').classList.remove('show');
+}
 // ═══════════════════════════════════════════════════════
 //  TOAST & OVERLAY
 // ═══════════════════════════════════════════════════════
@@ -2935,5 +3213,6 @@ function showOverlay(s) {
 </body>
 
 </html>
+
 
 
