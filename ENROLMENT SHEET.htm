@@ -104,36 +104,7 @@
   }
   .logout-btn.show { display: flex; }
   .logout-btn svg { width: 16px; height: 16px; }
-/* ─── SAVE INDICATOR ─── */
-  .save-indicator {
-    position: fixed;
-    top: 20px;
-    left: 20px;
-    background: rgba(42, 157, 92, 0.15);
-    backdrop-filter: blur(10px);
-    color: var(--green);
-    border: 1px solid rgba(42, 157, 92, 0.3);
-    padding: 10px 20px;
-    border-radius: 8px;
-    font-size: 0.75rem;
-    font-weight: 500;
-    display: none;
-    align-items: center;
-    gap: 8px;
-    z-index: 100;
-    opacity: 0.7;
-    transition: opacity .3s;
-  }
-  .save-indicator.show { display: flex; }
-  .save-indicator::before {
-    content: '●';
-    font-size: 0.6rem;
-    animation: pulse 2s ease-in-out infinite;
-  }
-  @keyframes pulse {
-    0%, 100% { opacity: 1; }
-    50% { opacity: 0.3; }
-  }
+
   /* ─── MAIN WRAPPER ─── */
   .main-wrap { max-width:780px; margin:0 auto; padding: 32px 18px 60px; }
 
@@ -582,6 +553,201 @@
     .info-strip { grid-template-columns:1fr; }
   }
 
+  /* ─── SECTION COMPLETION BADGES ─── */
+  .section-status {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 22px; height: 22px;
+    border-radius: 50%;
+    font-size: 0.72rem;
+    font-weight: 700;
+    flex-shrink: 0;
+    margin-right: 4px;
+    transition: all .25s;
+  }
+  .section-status.complete {
+    background: var(--green);
+    color: #fff;
+  }
+  .section-status.incomplete {
+    background: var(--red);
+    color: #fff;
+    animation: pulse-badge .5s ease;
+  }
+  .section-status.pending {
+    background: var(--border);
+    color: var(--text-muted);
+  }
+  @keyframes pulse-badge {
+    0%   { transform: scale(1); }
+    40%  { transform: scale(1.3); }
+    100% { transform: scale(1); }
+  }
+
+  /* Section header error state */
+  .section-header.has-errors {
+    background: rgba(214,57,70,0.06);
+    border-left: 3px solid var(--red);
+  }
+  .section-header.has-errors:hover { background: rgba(214,57,70,0.1); }
+
+  /* Required field highlight */
+  input.field-error, select.field-error {
+    border-color: var(--red) !important;
+    background: rgba(214,57,70,0.04) !important;
+    animation: shake .3s ease;
+  }
+  @keyframes shake {
+    0%,100% { transform: translateX(0); }
+    25%      { transform: translateX(-4px); }
+    75%      { transform: translateX(4px); }
+  }
+  .field-error-msg {
+    font-size: 0.68rem;
+    color: var(--red);
+    margin-top: 3px;
+    display: none;
+  }
+  .field-error-msg.show { display: block; }
+
+  /* Radio group error state */
+  .radio-group.group-error .radio-option,
+  .checkbox-group.group-error .checkbox-option {
+    border-color: rgba(214,57,70,0.4);
+  }
+  .radio-group.group-error,
+  .checkbox-group.group-error {
+    padding: 8px;
+    border-radius: 8px;
+    background: rgba(214,57,70,0.04);
+    border: 1px dashed rgba(214,57,70,0.4);
+  }
+
+  /* ─── VALIDATION SUMMARY PANEL ─── */
+  .val-summary {
+    display: none;
+    margin: 0 0 16px;
+    background: #fff;
+    border: 2px solid var(--red);
+    border-radius: 12px;
+    overflow: hidden;
+    animation: slideDown .3s ease;
+  }
+  .val-summary.show { display: block; }
+  @keyframes slideDown {
+    from { opacity:0; transform: translateY(-8px); }
+    to   { opacity:1; transform: translateY(0); }
+  }
+  .val-summary-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 14px 18px;
+    background: rgba(214,57,70,0.08);
+    border-bottom: 1px solid rgba(214,57,70,0.2);
+  }
+  .val-summary-header svg { width:18px; height:18px; color: var(--red); flex-shrink:0; }
+  .val-summary-title { font-weight:700; font-size:0.88rem; color: var(--red); }
+  .val-summary-list { padding: 12px 18px 16px; }
+  .val-summary-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+    padding: 6px 0;
+    border-bottom: 1px solid var(--border);
+    cursor: pointer;
+    transition: background .15s;
+    border-radius: 4px;
+    padding-left: 4px;
+  }
+  .val-summary-item:last-child { border-bottom: none; }
+  .val-summary-item:hover { background: rgba(214,57,70,0.05); }
+  .val-summary-item svg { width:14px; height:14px; color:var(--red); margin-top:2px; flex-shrink:0; }
+  .val-summary-section { font-weight:700; font-size:0.8rem; color:var(--navy); }
+  .val-summary-fields  { font-size:0.75rem; color:var(--text-muted); margin-top:1px; }
+
+  /* Progress bar across all sections */
+  .form-progress-wrap {
+    display: none;
+    padding: 10px 22px 0;
+    background: var(--cream-dark);
+    border-bottom: 1px solid var(--border);
+  }
+  .form-progress-wrap.show { display: block; }
+  .form-progress-label {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.7rem;
+    color: var(--text-muted);
+    font-weight: 600;
+    margin-bottom: 5px;
+  }
+  .form-progress-bar {
+    height: 5px;
+    background: var(--border);
+    border-radius: 10px;
+    margin-bottom: 10px;
+    overflow: hidden;
+  }
+  .form-progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--blue), var(--green));
+    border-radius: 10px;
+    transition: width .4s ease;
+    width: 0%;
+  }
+
+  /* ─── PREVIOUS DATA HINTS ─── */
+  .prev-hint {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    margin-top: 5px;
+    font-size: 0.7rem;
+    color: var(--blue);
+    font-weight: 500;
+    background: rgba(45,109,179,0.07);
+    border: 1px solid rgba(45,109,179,0.18);
+    border-left: 3px solid var(--blue);
+    border-radius: 5px;
+    padding: 3px 8px;
+    animation: fadePrev .3s ease;
+  }
+  .prev-hint svg { width:11px; height:11px; flex-shrink:0; opacity:.7; }
+  .prev-hint .prev-label { color: var(--text-muted); font-weight:400; }
+  .prev-hint .prev-val { color: var(--blue); font-weight:700; }
+  @keyframes fadePrev { from{opacity:0;transform:translateY(-3px)} to{opacity:1;transform:translateY(0)} }
+
+  .prev-data-banner {
+    display: none;
+    align-items: center;
+    gap: 10px;
+    padding: 11px 22px;
+    background: linear-gradient(90deg, rgba(45,109,179,0.09), rgba(45,109,179,0.03));
+    border-bottom: 1px solid rgba(45,109,179,0.2);
+    font-size: 0.8rem;
+    color: var(--blue);
+    font-weight: 600;
+  }
+  .prev-data-banner.show { display: flex; }
+  .prev-data-banner svg { width:16px; height:16px; flex-shrink:0; }
+
+  .prev-radio-hint {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 0.7rem;
+    color: var(--blue);
+    background: rgba(45,109,179,0.07);
+    border: 1px solid rgba(45,109,179,0.18);
+    border-radius: 20px;
+    padding: 2px 10px;
+    margin-bottom: 8px;
+    font-weight: 500;
+  }
+  .prev-radio-hint svg { width:11px; height:11px; }
+
   /* ─── PROJECT CARDS ─── */
   .project-card {
     background: var(--white);
@@ -632,7 +798,7 @@
 </head>
 <body>
 
-  <!-- ══════════════════ LOGOUT BUTTON ══════════════════ -->
+<!-- ══════════════════ LOGOUT BUTTON ══════════════════ -->
 <button class="logout-btn" id="logoutBtn" onclick="logout()">
   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
     <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
@@ -641,11 +807,6 @@
   </svg>
   Logout
 </button>
-
-<!-- ══════════════════ SAVE INDICATOR ══════════════════ -->
-<div class="save-indicator" id="saveIndicator">
-  Auto-save enabled
-</div>
 
 <!-- ══════════════════ TOP BANNER ══════════════════ -->
 <header class="top-banner">
@@ -702,61 +863,102 @@
         <div class="info-item"><label>Established Date</label><span id="disp-est">—</span></div>
       </div>
 
+      <!-- Previous data notice banner -->
+      <div class="prev-data-banner" id="prevDataBanner">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+        <span>Previously recorded data has been loaded as reference. Please enter <strong style="margin:0 3px;">current</strong> figures — old values shown below each field.</span>
+      </div>
+
+      <!-- Form completion progress bar -->
+      <div class="form-progress-wrap" id="formProgressWrap">
+        <div class="form-progress-label">
+          <span>Form Completion</span>
+          <span id="progressPct">0%</span>
+        </div>
+        <div class="form-progress-bar"><div class="form-progress-fill" id="progressFill"></div></div>
+      </div>
+
+      <!-- Validation summary panel (shown on failed submit) -->
+      <div class="val-summary" id="valSummary">
+        <div class="val-summary-header">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+          <div>
+            <div class="val-summary-title">Please complete all required sections before submitting</div>
+          </div>
+        </div>
+        <div class="val-summary-list" id="valSummaryList"></div>
+      </div>
+
       <!-- ─── ENROLMENT ─── -->
-      <div class="section-header open" onclick="toggleSection(this)">
+      <div class="section-header open" data-section="enrol" onclick="toggleSection(this)">
         <div class="section-header-left">
           <div class="section-icon enrol">📚</div>
           <div><div class="section-title">Enrolment</div><div class="section-count">Level-specific enrolment data</div></div>
         </div>
-        <svg class="toggle-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 9l6 6 6-6"/></svg>
+        <div style="display:flex;align-items:center;gap:8px;">
+          <span class="section-status pending" id="status-enrol" title="Not yet checked">—</span>
+          <svg class="toggle-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 9l6 6 6-6"/></svg>
+        </div>
       </div>
       <div class="section-body open" id="body-enrol">
         <div class="section-body-inner" id="enrol-fields"></div>
       </div>
 
       <!-- ─── STAFFING ─── -->
-      <div class="section-header" onclick="toggleSection(this)">
+      <div class="section-header" data-section="staff" onclick="toggleSection(this)">
         <div class="section-header-left">
           <div class="section-icon staff">👥</div>
           <div><div class="section-title">Staffing</div><div class="section-count">Trained teachers</div></div>
         </div>
-        <svg class="toggle-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 9l6 6 6-6"/></svg>
+        <div style="display:flex;align-items:center;gap:8px;">
+          <span class="section-status pending" id="status-staff" title="Not yet checked">—</span>
+          <svg class="toggle-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 9l6 6 6-6"/></svg>
+        </div>
       </div>
       <div class="section-body" id="body-staff">
         <div class="section-body-inner" id="staff-fields"></div>
       </div>
 
       <!-- ─── FURNITURE ─── -->
-      <div class="section-header" onclick="toggleSection(this)">
+      <div class="section-header" data-section="furn" onclick="toggleSection(this)">
         <div class="section-header-left">
           <div class="section-icon furn">🪑</div>
           <div><div class="section-title">Furniture</div><div class="section-count">Desks &amp; tables</div></div>
         </div>
-        <svg class="toggle-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 9l6 6 6-6"/></svg>
+        <div style="display:flex;align-items:center;gap:8px;">
+          <span class="section-status pending" id="status-furn" title="Not yet checked">—</span>
+          <svg class="toggle-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 9l6 6 6-6"/></svg>
+        </div>
       </div>
       <div class="section-body" id="body-furn">
         <div class="section-body-inner" id="furn-fields"></div>
       </div>
 
       <!-- ─── CLASSROOMS & VACANCIES ─── -->
-      <div class="section-header" onclick="toggleSection(this)">
+      <div class="section-header" data-section="class" onclick="toggleSection(this)">
         <div class="section-header-left">
           <div class="section-icon class">🏫</div>
           <div><div class="section-title">Classrooms &amp; Vacancies</div><div class="section-count">Permanent, temporary &amp; vacancies</div></div>
         </div>
-        <svg class="toggle-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 9l6 6 6-6"/></svg>
+        <div style="display:flex;align-items:center;gap:8px;">
+          <span class="section-status pending" id="status-class" title="Not yet checked">—</span>
+          <svg class="toggle-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 9l6 6 6-6"/></svg>
+        </div>
       </div>
       <div class="section-body" id="body-class">
         <div class="section-body-inner" id="class-fields"></div>
       </div>
 
       <!-- ─── STAFF ACCOMMODATION ─── -->
-      <div class="section-header" onclick="toggleSection(this)">
+      <div class="section-header" data-section="accom" onclick="toggleSection(this)">
         <div class="section-header-left">
           <div class="section-icon accom">🏠</div>
           <div><div class="section-title">Staff Accommodation</div><div class="section-count">Flats &amp; bungalows</div></div>
         </div>
-        <svg class="toggle-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 9l6 6 6-6"/></svg>
+        <div style="display:flex;align-items:center;gap:8px;">
+          <span class="section-status pending" id="status-accom" title="Not yet checked">—</span>
+          <svg class="toggle-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 9l6 6 6-6"/></svg>
+        </div>
       </div>
       <div class="section-body" id="body-accom">
         <div class="section-body-inner">
@@ -778,15 +980,18 @@
             <div class="input-grid">
               <div class="input-group">
                 <label>Total Teachers Occupying</label>
-                <input type="number" id="staffAccom_Total" placeholder="0" />
+                <input type="number" id="staffAccom_Total" placeholder="Enter current" />
+                <div class="prev-hint" id="hint_staffAccom_Total" style="display:none;"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg><span class="prev-label">Last recorded:</span>&nbsp;<span class="prev-val" id="hintval_staffAccom_Total"></span></div>
               </div>
               <div class="input-group">
                 <label>Male Teachers</label>
-                <input type="number" id="staffAccom_Male" placeholder="0" />
+                <input type="number" id="staffAccom_Male" placeholder="Enter current" />
+                <div class="prev-hint" id="hint_staffAccom_Male" style="display:none;"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg><span class="prev-label">Last recorded:</span>&nbsp;<span class="prev-val" id="hintval_staffAccom_Male"></span></div>
               </div>
               <div class="input-group">
                 <label>Female Teachers</label>
-                <input type="number" id="staffAccom_Female" placeholder="0" />
+                <input type="number" id="staffAccom_Female" placeholder="Enter current" />
+                <div class="prev-hint" id="hint_staffAccom_Female" style="display:none;"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg><span class="prev-label">Last recorded:</span>&nbsp;<span class="prev-val" id="hintval_staffAccom_Female"></span></div>
               </div>
             </div>
           </div>
@@ -794,12 +999,15 @@
       </div>
 
       <!-- ─── WATER SUPPLY ─── -->
-      <div class="section-header" onclick="toggleSection(this)">
+      <div class="section-header" data-section="water" onclick="toggleSection(this)">
         <div class="section-header-left">
           <div class="section-icon water">💧</div>
           <div><div class="section-title">Water Supply</div><div class="section-count">Access &amp; source</div></div>
         </div>
-        <svg class="toggle-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 9l6 6 6-6"/></svg>
+        <div style="display:flex;align-items:center;gap:8px;">
+          <span class="section-status pending" id="status-water" title="Not yet checked">—</span>
+          <svg class="toggle-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 9l6 6 6-6"/></svg>
+        </div>
       </div>
       <div class="section-body" id="body-water">
         <div class="section-body-inner">
@@ -872,12 +1080,15 @@
       </div>
 
     <!-- ─── SANITATION ─── -->
-<div class="section-header" onclick="toggleSection(this)">
+<div class="section-header" data-section="sanit" onclick="toggleSection(this)">
   <div class="section-header-left">
     <div class="section-icon sanit">🚻</div>
     <div><div class="section-title">Sanitation Facilities</div><div class="section-count">Toilets &amp; urinals</div></div>
   </div>
-  <svg class="toggle-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 9l6 6 6-6"/></svg>
+  <div style="display:flex;align-items:center;gap:8px;">
+    <span class="section-status pending" id="status-sanit" title="Not yet checked">—</span>
+    <svg class="toggle-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 9l6 6 6-6"/></svg>
+  </div>
 </div>
 <div class="section-body" id="body-sanit">
   <div class="section-body-inner">
@@ -927,11 +1138,13 @@
     <div class="input-grid two-col" style="margin-bottom:18px;">
       <div class="input-group">
         <label>Toilet Cubicles - Boys</label>
-        <input type="number" id="toiletCubicles_Boys" placeholder="0" />
+        <input type="number" id="toiletCubicles_Boys" placeholder="Enter current" />
+        <div class="prev-hint" id="hint_toiletCubicles_Boys" style="display:none;"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg><span class="prev-label">Last recorded:</span>&nbsp;<span class="prev-val" id="hintval_toiletCubicles_Boys"></span></div>
       </div>
       <div class="input-group">
         <label>Toilet Cubicles - Girls</label>
-        <input type="number" id="toiletCubicles_Girls" placeholder="0" />
+        <input type="number" id="toiletCubicles_Girls" placeholder="Enter current" />
+        <div class="prev-hint" id="hint_toiletCubicles_Girls" style="display:none;"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg><span class="prev-label">Last recorded:</span>&nbsp;<span class="prev-val" id="hintval_toiletCubicles_Girls"></span></div>
       </div>
     </div>
 
@@ -981,22 +1194,27 @@
     <div class="input-grid two-col">
       <div class="input-group">
         <label>Urinal Stations - Boys</label>
-        <input type="number" id="urinalStations_Boys" placeholder="0" />
+        <input type="number" id="urinalStations_Boys" placeholder="Enter current" />
+        <div class="prev-hint" id="hint_urinalStations_Boys" style="display:none;"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg><span class="prev-label">Last recorded:</span>&nbsp;<span class="prev-val" id="hintval_urinalStations_Boys"></span></div>
       </div>
       <div class="input-group">
         <label>Urinal Stations - Girls</label>
-        <input type="number" id="urinalStations_Girls" placeholder="0" />
+        <input type="number" id="urinalStations_Girls" placeholder="Enter current" />
+        <div class="prev-hint" id="hint_urinalStations_Girls" style="display:none;"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg><span class="prev-label">Last recorded:</span>&nbsp;<span class="prev-val" id="hintval_urinalStations_Girls"></span></div>
       </div>
     </div>
   </div>
 </div>
      <!-- ─── ONGOING PROJECTS ─── -->
-      <div class="section-header" onclick="toggleSection(this)">
+      <div class="section-header" data-section="proj" onclick="toggleSection(this)">
         <div class="section-header-left">
           <div class="section-icon proj">🏗️</div>
           <div><div class="section-title">Ongoing Projects</div><div class="section-count">Current development initiatives</div></div>
         </div>
-        <svg class="toggle-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 9l6 6 6-6"/></svg>
+        <div style="display:flex;align-items:center;gap:8px;">
+          <span class="section-status pending" id="status-proj" title="Not yet checked">—</span>
+          <svg class="toggle-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 9l6 6 6-6"/></svg>
+        </div>
       </div>
       <div class="section-body" id="body-proj">
         <div class="section-body-inner">
@@ -1044,35 +1262,43 @@
       </div>
 
       <!-- ─── FURNITURE & EQUIPMENT ─── -->
-      <div class="section-header" onclick="toggleSection(this)">
+      <div class="section-header" data-section="equip" onclick="toggleSection(this)">
         <div class="section-header-left">
           <div class="section-icon equip">📐</div>
           <div><div class="section-title">Teachers' Furniture</div><div class="section-count">Desks &amp; chairs</div></div>
         </div>
-        <svg class="toggle-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 9l6 6 6-6"/></svg>
+        <div style="display:flex;align-items:center;gap:8px;">
+          <span class="section-status pending" id="status-equip" title="Not yet checked">—</span>
+          <svg class="toggle-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 9l6 6 6-6"/></svg>
+        </div>
       </div>
       <div class="section-body" id="body-equip">
         <div class="section-body-inner">
           <div class="input-grid two-col">
             <div class="input-group">
               <label>Number of Teachers' Desks</label>
-              <input type="number" id="teachersDesks" placeholder="0" />
+              <input type="number" id="teachersDesks" placeholder="Enter current" />
+              <div class="prev-hint" id="hint_teachersDesks" style="display:none;"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg><span class="prev-label">Last recorded:</span>&nbsp;<span class="prev-val" id="hintval_teachersDesks"></span></div>
             </div>
             <div class="input-group">
               <label>Number of Teachers' Chairs</label>
-              <input type="number" id="teachersChairs" placeholder="0" />
+              <input type="number" id="teachersChairs" placeholder="Enter current" />
+              <div class="prev-hint" id="hint_teachersChairs" style="display:none;"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg><span class="prev-label">Last recorded:</span>&nbsp;<span class="prev-val" id="hintval_teachersChairs"></span></div>
             </div>
           </div>
         </div>
       </div>
 
       <!-- ─── FACILITIES & PROGRAMS ─── -->
-      <div class="section-header" onclick="toggleSection(this)">
+      <div class="section-header" data-section="facil" onclick="toggleSection(this)">
         <div class="section-header-left">
           <div class="section-icon facil">✨</div>
           <div><div class="section-title">Facilities &amp; Programs</div><div class="section-count">Available amenities</div></div>
         </div>
-        <svg class="toggle-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 9l6 6 6-6"/></svg>
+        <div style="display:flex;align-items:center;gap:8px;">
+          <span class="section-status pending" id="status-facil" title="Not yet checked">—</span>
+          <svg class="toggle-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 9l6 6 6-6"/></svg>
+        </div>
       </div>
       <div class="section-body" id="body-facil">
         <div class="section-body-inner">
@@ -1198,7 +1424,7 @@
 
       <!-- ACTION BUTTONS -->
       <div class="action-buttons">
-       <button class="btn-save" id="saveBtn" onclick="saveProgress(true)">
+        <button class="btn-save" id="saveBtn" onclick="saveProgress()">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
             <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/>
             <polyline points="17 21 17 13 7 13 7 21"/>
@@ -1258,12 +1484,155 @@
 // ═══════════════════════════════════════════════════════
 //  SCRIPT URL  
 // ═══════════════════════════════════════════════════════
-const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyM7OGIZa2EFqBRWeIaxn6tQPPyBMqQTasFkm5Zx0kTgbYvaWJ8Ad1NQMUQElLzI-QP/exec';
+const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzKW2r-g9dCY7CkxZAXEGo0bsrloQEdDj2tCmi1eBLsVOF-ECsFx9-c1ov6bZZWutzU/exec';
+
 // ═══════════════════════════════════════════════════════
-//  AUTO-SAVE CONFIGURATION
+//  APPS SCRIPT doGet UPDATE — paste this into your GAS
+//  The doGet must now return a `prevData` object with all
+//  previously saved field values for that school row.
+//  Add the following block inside doGet after the `data` 
+//  object is built (just before `return respondWithCORS(data)`):
+//
+//  const PREV_FIELD_COLS = [
+//    'NUMBER OF CLASSROOMS',
+//    'KG 1 - Total Enrolment','KG 1 - Boys','KG 1 - Girls',
+//    'KG 2 - Total Enrolment','KG 2 - Boys','KG 2 - Girls',
+//    'Basic 1 - Total Enrolment','Basic 1 - Boys','Basic 1 - Girls',
+//    'Basic 2 - Total Enrolment','Basic 2 - Boys','Basic 2 - Girls',
+//    'Basic 3 - Total Enrolment','Basic 3 - Boys','Basic 3 - Girls',
+//    'Basic 4 - Total Enrolment','Basic 4 - Boys','Basic 4 - Girls',
+//    'Basic 5 - Total Enrolment','Basic 5 - Boys','Basic 5 - Girls',
+//    'Basic 6 - Total Enrolment','Basic 6 - Boys','Basic 6 - Girls',
+//    'JHS 1 - Total Enrolment','JHS 1 - Boys','JHS 1 - Girls',
+//    'JHS 2 - Total Enrolment','JHS 2 - Boys','JHS 2 - Girls',
+//    'JHS 3 - Total Enrolment','JHS 3 - Boys','JHS 3 - Girls',
+//    'KG 1 - Hexagonal Tables','KG 1 - Sitting Places','KG 1 - Writing Places',
+//    'KG 2 - Hexagonal Tables','KG 2 - Sitting Places','KG 2 - Writing Places',
+//    'Basic 1 - Mono Desks','Basic 1 - Dual Desks',
+//    'Basic 2 - Mono Desks','Basic 2 - Dual Desks',
+//    'Basic 3 - Mono Desks','Basic 3 - Dual Desks',
+//    'Basic 4 - Mono Desks','Basic 4 - Dual Desks',
+//    'Basic 5 - Mono Desks','Basic 5 - Dual Desks',
+//    'Basic 6 - Mono Desks','Basic 6 - Dual Desks',
+//    'JHS 1 - Mono Desks','JHS 1 - Dual Desks',
+//    'JHS 2 - Mono Desks','JHS 2 - Dual Desks',
+//    'JHS 3 - Mono Desks','JHS 3 - Dual Desks',
+//    'KG - Total Trained Teachers','KG - Male Trained Teachers','KG - Female Trained Teachers',
+//    'Primary - Total Trained Teachers','Primary - Male Trained Teachers','Primary - Female Trained Teachers',
+//    'JHS - Total Trained Teachers','JHS - Male Trained Teachers','JHS - Female Trained Teachers',
+//    'KG - Permanent Classrooms','KG - Temporary Classrooms',
+//    'Primary - Permanent Classrooms','Primary - Temporary Classrooms',
+//    'JHS - Permanent Classrooms','JHS - Temporary Classrooms',
+//    'Vacancies',
+//    'Has Staff Accommodation','Staff Accommodation - Total Teachers',
+//    'Staff Accommodation - Male Teachers','Staff Accommodation - Female Teachers',
+//    'Has Access to Water','Water Ownership','Water Shared with Nearby School','Water Source Types',
+//    'Owns Toilet Facilities','Learners Have Toilet Access',
+//    'Toilet Cubicles - Boys','Toilet Cubicles - Girls',
+//    'Owns Urinal Facilities','Learners Have Urinal Access',
+//    'Urinal Stations - Boys','Urinal Stations - Girls',
+//    'Has Ongoing Projects','Projects Data',
+//    'Number of Teachers Desks','Number of Teachers Chairs',
+//    'Has Staff Common Room','Has ICT Laboratory','Has Library','Has School Farm',
+//    'Is GALOP Beneficiary','Is School Feeding Beneficiary',
+//    'Has Electricity Access','Electricity Source'
+//  ];
+//
+//  // Build prevData map using sheet column names -> JS payload keys
+//  const COL_TO_KEY = {
+//    'NUMBER OF CLASSROOMS': 'numberOfClassrooms',
+//    'KG 1 - Boys': 'KG1_Boys', 'KG 1 - Girls': 'KG1_Girls',
+//    'KG 1 - Total Enrolment': 'KG1_TotalEnrolment',
+//    'KG 2 - Boys': 'KG2_Boys', 'KG 2 - Girls': 'KG2_Girls',
+//    'KG 2 - Total Enrolment': 'KG2_TotalEnrolment',
+//    'Basic 1 - Boys': 'Basic1_Boys', 'Basic 1 - Girls': 'Basic1_Girls',
+//    'Basic 1 - Total Enrolment': 'Basic1_TotalEnrolment',
+//    'Basic 2 - Boys': 'Basic2_Boys', 'Basic 2 - Girls': 'Basic2_Girls',
+//    'Basic 2 - Total Enrolment': 'Basic2_TotalEnrolment',
+//    'Basic 3 - Boys': 'Basic3_Boys', 'Basic 3 - Girls': 'Basic3_Girls',
+//    'Basic 3 - Total Enrolment': 'Basic3_TotalEnrolment',
+//    'Basic 4 - Boys': 'Basic4_Boys', 'Basic 4 - Girls': 'Basic4_Girls',
+//    'Basic 4 - Total Enrolment': 'Basic4_TotalEnrolment',
+//    'Basic 5 - Boys': 'Basic5_Boys', 'Basic 5 - Girls': 'Basic5_Girls',
+//    'Basic 5 - Total Enrolment': 'Basic5_TotalEnrolment',
+//    'Basic 6 - Boys': 'Basic6_Boys', 'Basic 6 - Girls': 'Basic6_Girls',
+//    'Basic 6 - Total Enrolment': 'Basic6_TotalEnrolment',
+//    'JHS 1 - Boys': 'JHS1_Boys', 'JHS 1 - Girls': 'JHS1_Girls',
+//    'JHS 1 - Total Enrolment': 'JHS1_TotalEnrolment',
+//    'JHS 2 - Boys': 'JHS2_Boys', 'JHS 2 - Girls': 'JHS2_Girls',
+//    'JHS 2 - Total Enrolment': 'JHS2_TotalEnrolment',
+//    'JHS 3 - Boys': 'JHS3_Boys', 'JHS 3 - Girls': 'JHS3_Girls',
+//    'JHS 3 - Total Enrolment': 'JHS3_TotalEnrolment',
+//    'KG 1 - Hexagonal Tables': 'KG1_HexTables', 'KG 1 - Sitting Places': 'KG1_SittingPlaces', 'KG 1 - Writing Places': 'KG1_WritingPlaces',
+//    'KG 2 - Hexagonal Tables': 'KG2_HexTables', 'KG 2 - Sitting Places': 'KG2_SittingPlaces', 'KG 2 - Writing Places': 'KG2_WritingPlaces',
+//    'Basic 1 - Mono Desks': 'Basic1_MonoDesks', 'Basic 1 - Dual Desks': 'Basic1_DualDesks',
+//    'Basic 2 - Mono Desks': 'Basic2_MonoDesks', 'Basic 2 - Dual Desks': 'Basic2_DualDesks',
+//    'Basic 3 - Mono Desks': 'Basic3_MonoDesks', 'Basic 3 - Dual Desks': 'Basic3_DualDesks',
+//    'Basic 4 - Mono Desks': 'Basic4_MonoDesks', 'Basic 4 - Dual Desks': 'Basic4_DualDesks',
+//    'Basic 5 - Mono Desks': 'Basic5_MonoDesks', 'Basic 5 - Dual Desks': 'Basic5_DualDesks',
+//    'Basic 6 - Mono Desks': 'Basic6_MonoDesks', 'Basic 6 - Dual Desks': 'Basic6_DualDesks',
+//    'JHS 1 - Mono Desks': 'JHS1_MonoDesks', 'JHS 1 - Dual Desks': 'JHS1_DualDesks',
+//    'JHS 2 - Mono Desks': 'JHS2_MonoDesks', 'JHS 2 - Dual Desks': 'JHS2_DualDesks',
+//    'JHS 3 - Mono Desks': 'JHS3_MonoDesks', 'JHS 3 - Dual Desks': 'JHS3_DualDesks',
+//    'KG - Male Trained Teachers': 'KG_MaleTrainedTeachers',
+//    'KG - Female Trained Teachers': 'KG_FemaleTrainedTeachers',
+//    'KG - Total Trained Teachers': 'KG_TotalTrainedTeachers',
+//    'Primary - Male Trained Teachers': 'Primary_MaleTrainedTeachers',
+//    'Primary - Female Trained Teachers': 'Primary_FemaleTrainedTeachers',
+//    'Primary - Total Trained Teachers': 'Primary_TotalTrainedTeachers',
+//    'JHS - Male Trained Teachers': 'JHS_MaleTrainedTeachers',
+//    'JHS - Female Trained Teachers': 'JHS_FemaleTrainedTeachers',
+//    'JHS - Total Trained Teachers': 'JHS_TotalTrainedTeachers',
+//    'KG - Permanent Classrooms': 'KG_PermanentClassrooms',
+//    'KG - Temporary Classrooms': 'KG_TemporaryClassrooms',
+//    'Primary - Permanent Classrooms': 'Primary_PermanentClassrooms',
+//    'Primary - Temporary Classrooms': 'Primary_TemporaryClassrooms',
+//    'JHS - Permanent Classrooms': 'JHS_PermanentClassrooms',
+//    'JHS - Temporary Classrooms': 'JHS_TemporaryClassrooms',
+//    'Vacancies': 'vacancies',
+//    'Has Staff Accommodation': 'hasStaffAccommodation',
+//    'Staff Accommodation - Total Teachers': 'staffAccom_Total',
+//    'Staff Accommodation - Male Teachers': 'staffAccom_Male',
+//    'Staff Accommodation - Female Teachers': 'staffAccom_Female',
+//    'Has Access to Water': 'hasWaterAccess',
+//    'Water Ownership': 'waterOwnership',
+//    'Water Shared with Nearby School': 'waterShared',
+//    'Water Source Types': 'waterSourceTypes',
+//    'Owns Toilet Facilities': 'ownsToilet',
+//    'Learners Have Toilet Access': 'learnersToiletAccess',
+//    'Toilet Cubicles - Boys': 'toiletCubicles_Boys',
+//    'Toilet Cubicles - Girls': 'toiletCubicles_Girls',
+//    'Owns Urinal Facilities': 'ownsUrinal',
+//    'Learners Have Urinal Access': 'learnersUrinalAccess',
+//    'Urinal Stations - Boys': 'urinalStations_Boys',
+//    'Urinal Stations - Girls': 'urinalStations_Girls',
+//    'Has Ongoing Projects': 'hasOngoingProjects',
+//    'Projects Data': 'projects',
+//    'Number of Teachers Desks': 'teachersDesks',
+//    'Number of Teachers Chairs': 'teachersChairs',
+//    'Has Staff Common Room': 'hasStaffCommonRoom',
+//    'Has ICT Laboratory': 'hasICTLab',
+//    'Has Library': 'hasLibrary',
+//    'Has School Farm': 'hasSchoolFarm',
+//    'Is GALOP Beneficiary': 'isGALOP',
+//    'Is School Feeding Beneficiary': 'isSchoolFeeding',
+//    'Has Electricity Access': 'hasElectricity',
+//    'Electricity Source': 'electricitySource'
+//  };
+//
+//  const prevData = {};
+//  Object.entries(COL_TO_KEY).forEach(([colName, jsKey]) => {
+//    const colIdx = colMap[colName];
+//    if (colIdx !== undefined) {
+//      const rawVal = sheet.getRange(row, colIdx + 1).getValue();
+//      const strVal = String(rawVal).trim();
+//      if (strVal && strVal !== '0') prevData[jsKey] = strVal;
+//    }
+//  });
+//  data.prevData = prevData;
+//  return respondWithCORS(data);
 // ═══════════════════════════════════════════════════════
-let autoSaveTimer = null;
-const AUTO_SAVE_DELAY = 2000; // Save 2 seconds after user stops typing
+
 // ═══════════════════════════════════════════════════════
 //  VACANCY OPTIONS BY LEVEL
 // ═══════════════════════════════════════════════════════
@@ -1322,6 +1691,7 @@ let currentLevel = null;
 let selectedVacancies = [];
 let projectCounter = 0;
 let projects = [];
+let prevData = {}; // ← stores previously submitted sheet data
 
 const PROJECT_TYPES = [
   'Infrastructure (classroom construction/renovation)',
@@ -1530,20 +1900,6 @@ document.addEventListener('change', function(e) {
     }
   }
 });
-// ═══════════════════════════════════════════════════════
-//  PREVENT ACCIDENTAL PAGE REFRESH/CLOSE
-// ═══════════════════════════════════════════════════════
-window.addEventListener('beforeunload', function(e) {
-  // Only show warning if user is logged in (form is visible)
-  if (verifiedRow && currentLevel) {
-    // Standard way to show confirmation dialog
-    e.preventDefault();
-    // Chrome requires returnValue to be set
-    e.returnValue = '';
-    // Some browsers show this message, others show a generic message
-    return 'You have unsaved changes. All data is auto-saved locally. Are you sure you want to leave?';
-  }
-});
 
 // ═══════════════════════════════════════════════════════
 //  FIELD BUILDERS (DYNAMIC BASED ON LEVEL)
@@ -1593,14 +1949,26 @@ function buildEnrolmentRow(id, label) {
         <div class="calc-badge">Auto-calculated</div>
         <label>${label} – Total Enrolment</label>
         <input type="number" id="${id}_TotalEnrolment" class="calc" readonly placeholder="0" />
+        <div class="prev-hint" id="hint_${id}_TotalEnrolment" style="display:none;">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+          <span class="prev-label">Last recorded:</span>&nbsp;<span class="prev-val" id="hintval_${id}_TotalEnrolment"></span>
+        </div>
       </div>
       <div class="input-group">
         <label>${label} – Boys</label>
-        <input type="number" id="${id}_Boys" oninput="calcEnrol('${id}')" placeholder="0" />
+        <input type="number" id="${id}_Boys" oninput="calcEnrol('${id}')" placeholder="Enter current" />
+        <div class="prev-hint" id="hint_${id}_Boys" style="display:none;">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+          <span class="prev-label">Last recorded:</span>&nbsp;<span class="prev-val" id="hintval_${id}_Boys"></span>
+        </div>
       </div>
       <div class="input-group">
         <label>${label} – Girls</label>
-        <input type="number" id="${id}_Girls" oninput="calcEnrol('${id}')" placeholder="0" />
+        <input type="number" id="${id}_Girls" oninput="calcEnrol('${id}')" placeholder="Enter current" />
+        <div class="prev-hint" id="hint_${id}_Girls" style="display:none;">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+          <span class="prev-label">Last recorded:</span>&nbsp;<span class="prev-val" id="hintval_${id}_Girls"></span>
+        </div>
       </div>
     </div>`;
 }
@@ -1626,14 +1994,17 @@ function buildStaffing(container, level) {
         <div class="calc-badge">Auto-calculated</div>
         <label>${prefix} – Total Trained Teachers</label>
         <input type="number" id="${prefix}_TotalTrainedTeachers" class="calc" readonly placeholder="0" />
+        <div class="prev-hint" id="hint_${prefix}_TotalTrainedTeachers" style="display:none;"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg><span class="prev-label">Last recorded:</span>&nbsp;<span class="prev-val" id="hintval_${prefix}_TotalTrainedTeachers"></span></div>
       </div>
       <div class="input-group">
         <label>${prefix} – Male Trained Teachers</label>
-        <input type="number" id="${prefix}_MaleTrainedTeachers" oninput="calcStaff('${prefix}')" placeholder="0" />
+        <input type="number" id="${prefix}_MaleTrainedTeachers" oninput="calcStaff('${prefix}')" placeholder="Enter current" />
+        <div class="prev-hint" id="hint_${prefix}_MaleTrainedTeachers" style="display:none;"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg><span class="prev-label">Last recorded:</span>&nbsp;<span class="prev-val" id="hintval_${prefix}_MaleTrainedTeachers"></span></div>
       </div>
       <div class="input-group">
         <label>${prefix} – Female Trained Teachers</label>
-        <input type="number" id="${prefix}_FemaleTrainedTeachers" oninput="calcStaff('${prefix}')" placeholder="0" />
+        <input type="number" id="${prefix}_FemaleTrainedTeachers" oninput="calcStaff('${prefix}')" placeholder="Enter current" />
+        <div class="prev-hint" id="hint_${prefix}_FemaleTrainedTeachers" style="display:none;"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg><span class="prev-label">Last recorded:</span>&nbsp;<span class="prev-val" id="hintval_${prefix}_FemaleTrainedTeachers"></span></div>
       </div>
     </div>`;
   });
@@ -1653,9 +2024,9 @@ function buildFurniture(container, level) {
       const id = lvl.replace(/\s/g, '');
       html += `
       <div class="input-grid" style="margin-bottom:14px;">
-        <div class="input-group"><label>${lvl} – Hexagonal Tables</label><input type="number" id="${id}_HexTables" placeholder="0" /></div>
-        <div class="input-group"><label>${lvl} – Sitting Places</label><input type="number" id="${id}_SittingPlaces" placeholder="0" /></div>
-        <div class="input-group"><label>${lvl} – Writing Places</label><input type="number" id="${id}_WritingPlaces" placeholder="0" /></div>
+        <div class="input-group"><label>${lvl} – Hexagonal Tables</label><input type="number" id="${id}_HexTables" placeholder="Enter current" /><div class="prev-hint" id="hint_${id}_HexTables" style="display:none;"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg><span class="prev-label">Last recorded:</span>&nbsp;<span class="prev-val" id="hintval_${id}_HexTables"></span></div></div>
+        <div class="input-group"><label>${lvl} – Sitting Places</label><input type="number" id="${id}_SittingPlaces" placeholder="Enter current" /><div class="prev-hint" id="hint_${id}_SittingPlaces" style="display:none;"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg><span class="prev-label">Last recorded:</span>&nbsp;<span class="prev-val" id="hintval_${id}_SittingPlaces"></span></div></div>
+        <div class="input-group"><label>${lvl} – Writing Places</label><input type="number" id="${id}_WritingPlaces" placeholder="Enter current" /><div class="prev-hint" id="hint_${id}_WritingPlaces" style="display:none;"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg><span class="prev-label">Last recorded:</span>&nbsp;<span class="prev-val" id="hintval_${id}_WritingPlaces"></span></div></div>
       </div>`;
     });
   }
@@ -1670,8 +2041,8 @@ function buildFurniture(container, level) {
         const id = lvl.replace(/\s/g, '');
         html += `
         <div class="input-grid two-col" style="margin-bottom:14px;">
-          <div class="input-group"><label>${lvl} – Mono Desks</label><input type="number" id="${id}_MonoDesks" placeholder="0" /></div>
-          <div class="input-group"><label>${lvl} – Dual Desks</label><input type="number" id="${id}_DualDesks" placeholder="0" /></div>
+          <div class="input-group"><label>${lvl} – Mono Desks</label><input type="number" id="${id}_MonoDesks" placeholder="Enter current" /><div class="prev-hint" id="hint_${id}_MonoDesks" style="display:none;"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg><span class="prev-label">Last recorded:</span>&nbsp;<span class="prev-val" id="hintval_${id}_MonoDesks"></span></div></div>
+          <div class="input-group"><label>${lvl} – Dual Desks</label><input type="number" id="${id}_DualDesks" placeholder="Enter current" /><div class="prev-hint" id="hint_${id}_DualDesks" style="display:none;"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg><span class="prev-label">Last recorded:</span>&nbsp;<span class="prev-val" id="hintval_${id}_DualDesks"></span></div></div>
         </div>`;
       });
     }
@@ -1682,8 +2053,8 @@ function buildFurniture(container, level) {
         const id = lvl.replace(/\s/g, '');
         html += `
         <div class="input-grid two-col" style="margin-bottom:14px;">
-          <div class="input-group"><label>${lvl} – Mono Desks</label><input type="number" id="${id}_MonoDesks" placeholder="0" /></div>
-          <div class="input-group"><label>${lvl} – Dual Desks</label><input type="number" id="${id}_DualDesks" placeholder="0" /></div>
+          <div class="input-group"><label>${lvl} – Mono Desks</label><input type="number" id="${id}_MonoDesks" placeholder="Enter current" /><div class="prev-hint" id="hint_${id}_MonoDesks" style="display:none;"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg><span class="prev-label">Last recorded:</span>&nbsp;<span class="prev-val" id="hintval_${id}_MonoDesks"></span></div></div>
+          <div class="input-group"><label>${lvl} – Dual Desks</label><input type="number" id="${id}_DualDesks" placeholder="Enter current" /><div class="prev-hint" id="hint_${id}_DualDesks" style="display:none;"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg><span class="prev-label">Last recorded:</span>&nbsp;<span class="prev-val" id="hintval_${id}_DualDesks"></span></div></div>
         </div>`;
       });
     }
@@ -1700,7 +2071,7 @@ function buildClassrooms(container, level) {
   let html = `
   <div class="level-label">General</div>
   <div class="input-grid two-col" style="margin-bottom:18px;">
-    <div class="input-group"><label>Number of Classrooms</label><input type="number" id="numberOfClassrooms" placeholder="0" /></div>
+    <div class="input-group"><label>Number of Classrooms</label><input type="number" id="numberOfClassrooms" placeholder="Enter current" /><div class="prev-hint" id="hint_numberOfClassrooms" style="display:none;"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg><span class="prev-label">Last recorded:</span>&nbsp;<span class="prev-val" id="hintval_numberOfClassrooms"></span></div></div>
   </div>
   
   <div class="level-label">Vacancies</div>
@@ -1730,11 +2101,13 @@ function buildClassrooms(container, level) {
     <div style="margin-bottom:14px;">
       <div class="input-group" style="margin-bottom:10px;">
         <label>${c} – Permanent Classrooms</label>
-        <input type="number" id="${c}_PermanentClassrooms" placeholder="0" />
+        <input type="number" id="${c}_PermanentClassrooms" placeholder="Enter current" />
+        <div class="prev-hint" id="hint_${c}_PermanentClassrooms" style="display:none;"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg><span class="prev-label">Last recorded:</span>&nbsp;<span class="prev-val" id="hintval_${c}_PermanentClassrooms"></span></div>
       </div>
       <div class="input-group">
         <label>${c} – Temporary Classrooms</label>
-        <input type="number" id="${c}_TemporaryClassrooms" placeholder="0" />
+        <input type="number" id="${c}_TemporaryClassrooms" placeholder="Enter current" />
+        <div class="prev-hint" id="hint_${c}_TemporaryClassrooms" style="display:none;"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg><span class="prev-label">Last recorded:</span>&nbsp;<span class="prev-val" id="hintval_${c}_TemporaryClassrooms"></span></div>
       </div>
     </div>`;
   });
@@ -1816,6 +2189,8 @@ function verifyStaff() {
     if (data.found) {
       verifiedRow = data;
       currentLevel = data.level;
+      // Store all previously submitted field values (server returns them alongside school info)
+      prevData = data.prevData || {};
       showForm(data);
       loadSavedProgress(data.staffId);
     } else {
@@ -1851,13 +2226,20 @@ function showForm(data) {
     return;
   }
 
- document.getElementById('auth-section').style.display = 'none';
+  // Populate previous data hints + pre-fill inputs
+  if (Object.keys(prevData).length > 0) {
+    populatePreviousData(prevData);
+    document.getElementById('prevDataBanner').classList.add('show');
+  }
+
+  document.getElementById('auth-section').style.display = 'none';
   document.getElementById('form-section').classList.add('show');
   document.getElementById('logoutBtn').classList.add('show');
-  document.getElementById('saveIndicator').classList.add('show');
-  
-  // Initialize auto-save listeners after form is shown
-  initializeAutoSave();
+  document.getElementById('formProgressWrap').classList.add('show');
+
+  // attach live validation listener (fires on any input/change inside the form)
+  document.getElementById('mainCard').addEventListener('input',  liveValidate);
+  document.getElementById('mainCard').addEventListener('change', liveValidate);
 }
 
 function showAuthError(msg) {
@@ -1984,11 +2366,9 @@ function collectPayload() {
 // ═══════════════════════════════════════════════════════
 //  SAVE & LOAD PROGRESS
 // ═══════════════════════════════════════════════════════
-function saveProgress(showNotification = true) {
+function saveProgress() {
   if (!verifiedRow || !currentLevel) {
-    if (showNotification) {
-      showToast('Please verify your ID first', 'error');
-    }
+    showToast('Please verify your ID first', 'error');
     return;
   }
 
@@ -1996,38 +2376,9 @@ function saveProgress(showNotification = true) {
   const storageKey = 'ges_form_progress_' + verifiedRow.staffId;
   
   if (saveToLocalStorage(storageKey, payload)) {
-    if (showNotification) {
-      showToast('Progress saved successfully!', 'info');
-    }
-    // Update last saved timestamp
-    const timestamp = new Date().toLocaleTimeString('en-GB', { 
-      hour: '2-digit', 
-      minute: '2-digit' 
-    });
-    updateSaveIndicator(timestamp);
+    showToast('Progress saved successfully!', 'info');
   } else {
-    if (showNotification) {
-      showToast('Failed to save progress', 'error');
-    }
-  }
-}
-
-// Auto-save function (silent background save)
-function autoSave() {
-  clearTimeout(autoSaveTimer);
-  autoSaveTimer = setTimeout(() => {
-    saveProgress(false); // false = don't show notification
-  }, AUTO_SAVE_DELAY);
-}
-
-function updateSaveIndicator(timestamp) {
-  const indicator = document.getElementById('saveIndicator');
-  if (indicator) {
-    indicator.textContent = 'Last saved: ' + timestamp;
-    indicator.style.opacity = '1';
-    setTimeout(() => {
-      indicator.style.opacity = '0.7';
-    }, 2000);
+    showToast('Failed to save progress', 'error');
   }
 }
 
@@ -2035,19 +2386,7 @@ function loadSavedProgress(staffId) {
   const storageKey = 'ges_form_progress_' + staffId;
   const savedData = getFromLocalStorage(storageKey);
   
-  // If no saved data, just return silently
   if (!savedData) return;
-
-  // Check if there's actually meaningful data to restore
-  // (not just empty action/staffId/level fields)
-  const hasActualData = Object.keys(savedData).some(key => {
-    if (['action', 'staffId', 'level'].includes(key)) return false;
-    if (Array.isArray(savedData[key])) return savedData[key].length > 0;
-    return savedData[key] !== '' && savedData[key] !== null && savedData[key] !== undefined;
-  });
-
-  // If no actual data to restore, return silently
-  if (!hasActualData) return;
 
   Object.keys(savedData).forEach(key => {
     if (['action', 'staffId', 'level', 'vacancies', 'waterSourceTypes', 'projectTypes', 'projectFunding'].includes(key)) return;
@@ -2088,6 +2427,7 @@ function loadSavedProgress(staffId) {
   });
 
   // Restore checkbox arrays
+ // Restore checkbox arrays
   ['waterSourceTypes'].forEach(key => {
     if (savedData[key] && Array.isArray(savedData[key])) {
       savedData[key].forEach(value => {
@@ -2113,7 +2453,7 @@ function loadSavedProgress(staffId) {
     });
   }
 
-  // Restore projects
+// Restore projects
   if (savedData.hasOngoingProjects === 'Yes' && savedData.projects && Array.isArray(savedData.projects)) {
     savedData.projects.forEach((project, index) => {
       addProject();
@@ -2141,46 +2481,209 @@ function loadSavedProgress(staffId) {
     });
   }
 
-  // Only show toast if we actually restored data
   showToast('Previous progress loaded', 'info');
 }
+
 // ═══════════════════════════════════════════════════════
-//  INITIALIZE AUTO-SAVE LISTENERS
+//  POPULATE PREVIOUS DATA (hints + pre-fill)
 // ═══════════════════════════════════════════════════════
-function initializeAutoSave() {
-  // Auto-save on all input changes
-  document.getElementById('mainCard').addEventListener('input', function(e) {
-    if (e.target.matches('input, select')) {
-      autoSave();
+function populatePreviousData(data) {
+  // ── Helper: show a hint badge under a number/text input ──
+  function showHint(fieldId, value) {
+    if (value === '' || value === null || value === undefined || value === '0' || value === 0) return;
+    const hintEl = document.getElementById('hint_' + fieldId);
+    const valEl  = document.getElementById('hintval_' + fieldId);
+    if (hintEl && valEl) {
+      valEl.textContent = value;
+      hintEl.style.display = 'flex';
     }
-  });
-  
-  // Auto-save on radio/checkbox changes
-  document.getElementById('mainCard').addEventListener('change', function(e) {
-    if (e.target.matches('input[type="radio"], input[type="checkbox"]')) {
-      autoSave();
+  }
+
+  // ── Helper: pre-fill input AND show hint ──
+  function fillAndHint(fieldId, value) {
+    if (value === '' || value === null || value === undefined) return;
+    const el = document.getElementById(fieldId);
+    if (el && !el.readOnly) {
+      el.value = value;
+      // Trigger auto-calc if Boys/Girls
+      if (fieldId.endsWith('_Boys') || fieldId.endsWith('_Girls')) {
+        const prefix = fieldId.replace(/_Boys$|_Girls$/, '');
+        calcEnrol(prefix);
+      }
+      if (fieldId.endsWith('_MaleTrainedTeachers') || fieldId.endsWith('_FemaleTrainedTeachers')) {
+        const prefix = fieldId.replace(/_MaleTrainedTeachers$|_FemaleTrainedTeachers$/, '');
+        calcStaff(prefix);
+      }
     }
-  });
-  
-  // Show initial save indicator
-  updateSaveIndicator('ready');
+    showHint(fieldId, value);
+  }
+
+  // ── Helper: restore radio + show prev badge ──
+  function fillRadio(name, value) {
+    if (!value) return;
+    const radio = document.querySelector(`input[name="${name}"][value="${value}"]`);
+    if (radio) {
+      radio.checked = true;
+      radio.parentElement.classList.add('selected');
+      // Trigger conditional panels
+      if (name === 'hasStaffAccommodation') toggleConditional('accom-details', value === 'Yes');
+      if (name === 'hasWaterAccess')        toggleConditional('water-details',  value === 'Yes');
+      if (name === 'hasOngoingProjects')    toggleConditional('proj-details',   value === 'Yes');
+      if (name === 'hasElectricity')        toggleConditional('elec-source',    value === 'Yes');
+    }
+    // Insert a "Previously: X" badge before the radio-group
+    const group = document.querySelector(`input[name="${name}"]`)?.closest('.input-group');
+    if (group && !group.querySelector('.prev-radio-hint')) {
+      const badge = document.createElement('div');
+      badge.className = 'prev-radio-hint';
+      badge.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg> Last recorded: <strong style="margin-left:3px;">${value}</strong>`;
+      const radioGroup = group.querySelector('.radio-group');
+      if (radioGroup) group.insertBefore(badge, radioGroup);
+    }
+  }
+
+  // ── Helper: restore checkboxes ──
+  function fillCheckboxes(name, valueArr) {
+    if (!Array.isArray(valueArr)) return;
+    valueArr.forEach(v => {
+      const cb = document.querySelector(`input[name="${name}"][value="${v}"]`);
+      if (cb) { cb.checked = true; cb.parentElement.classList.add('selected'); }
+    });
+  }
+
+  // ══ NUMBER FIELDS ══
+  const numericFields = [
+    'numberOfClassrooms',
+    'staffAccom_Total','staffAccom_Male','staffAccom_Female',
+    'toiletCubicles_Boys','toiletCubicles_Girls',
+    'urinalStations_Boys','urinalStations_Girls',
+    'teachersDesks','teachersChairs'
+  ];
+  numericFields.forEach(f => fillAndHint(f, data[f]));
+
+  // Enrolment
+  const config = LEVEL_CONFIG[currentLevel];
+  if (config) {
+    config.enrolment.forEach(lvl => {
+      const id = lvl.replace(/\s/g, '');
+      fillAndHint(id + '_Boys',  data[id + '_Boys']);
+      fillAndHint(id + '_Girls', data[id + '_Girls']);
+    });
+
+    config.furniture.kg.forEach(lvl => {
+      const id = lvl.replace(/\s/g, '');
+      fillAndHint(id + '_HexTables',    data[id + '_HexTables']);
+      fillAndHint(id + '_SittingPlaces',data[id + '_SittingPlaces']);
+      fillAndHint(id + '_WritingPlaces',data[id + '_WritingPlaces']);
+    });
+
+    config.furniture.desk.forEach(lvl => {
+      const id = lvl.replace(/\s/g, '');
+      fillAndHint(id + '_MonoDesks', data[id + '_MonoDesks']);
+      fillAndHint(id + '_DualDesks', data[id + '_DualDesks']);
+    });
+
+    const prefixMap = { 'Kindergarten (KG)':'KG', 'Primary':'Primary', 'Junior High School (JHS)':'JHS' };
+    config.staffing.forEach(s => {
+      const p = prefixMap[s];
+      fillAndHint(p + '_MaleTrainedTeachers',   data[p + '_MaleTrainedTeachers']);
+      fillAndHint(p + '_FemaleTrainedTeachers',  data[p + '_FemaleTrainedTeachers']);
+    });
+
+    config.classrooms.forEach(c => {
+      fillAndHint(c + '_PermanentClassrooms', data[c + '_PermanentClassrooms']);
+      fillAndHint(c + '_TemporaryClassrooms', data[c + '_TemporaryClassrooms']);
+    });
+  }
+
+  // ══ RADIO FIELDS ══
+  [
+    'hasStaffAccommodation','hasWaterAccess','waterOwnership','waterShared',
+    'ownsToilet','learnersToiletAccess','ownsUrinal','learnersUrinalAccess',
+    'hasOngoingProjects','hasStaffCommonRoom','hasICTLab','hasLibrary',
+    'hasSchoolFarm','isGALOP','isSchoolFeeding','hasElectricity','electricitySource'
+  ].forEach(name => fillRadio(name, data[name]));
+
+  // ══ CHECKBOX FIELDS ══
+  if (data.waterSourceTypes) {
+    const arr = typeof data.waterSourceTypes === 'string'
+      ? data.waterSourceTypes.split(',').map(s => s.trim()).filter(Boolean)
+      : data.waterSourceTypes;
+    fillCheckboxes('waterSourceTypes', arr);
+  }
+
+  // ══ VACANCIES ══
+  if (data.vacancies) {
+    const vacArr = typeof data.vacancies === 'string'
+      ? data.vacancies.split(',').map(s => s.trim()).filter(Boolean)
+      : data.vacancies;
+    vacArr.forEach(vacancy => {
+      const safeId = 'vacancy_' + vacancy.replace(/\s+/g, '_').replace(/&/g, 'and');
+      const cb = document.getElementById(safeId);
+      if (cb) { cb.checked = true; cb.parentElement.classList.add('selected'); }
+    });
+    selectedVacancies = vacArr;
+  }
+
+  // ══ PROJECTS ══
+  if (data.hasOngoingProjects === 'Yes' && data.projects) {
+    let projectsArr = data.projects;
+    if (typeof projectsArr === 'string') {
+      try { projectsArr = JSON.parse(projectsArr); } catch(e) { projectsArr = []; }
+    }
+    if (Array.isArray(projectsArr)) {
+      projectsArr.forEach((project, index) => {
+        addProject();
+        const pId = 'project_' + (index + 1);
+        const typeEl = document.getElementById(pId + '_type');
+        if (typeEl && project.type) typeEl.value = project.type;
+        const yearEl = document.getElementById(pId + '_year');
+        if (yearEl && project.year) yearEl.value = project.year;
+        if (Array.isArray(project.funding)) {
+          project.funding.forEach(src => {
+            const cb = document.querySelector(`input[name="${pId}_funding"][value="${src}"]`);
+            if (cb) { cb.checked = true; cb.parentElement.classList.add('selected'); }
+          });
+        }
+      });
+    }
+  }
+
+  // Show static field hints (accommodation, equipment)
+  showHint('staffAccom_Total',  data['staffAccom_Total']);
+  showHint('staffAccom_Male',   data['staffAccom_Male']);
+  showHint('staffAccom_Female', data['staffAccom_Female']);
+  showHint('toiletCubicles_Boys',  data['toiletCubicles_Boys']);
+  showHint('toiletCubicles_Girls', data['toiletCubicles_Girls']);
+  showHint('urinalStations_Boys',  data['urinalStations_Boys']);
+  showHint('urinalStations_Girls', data['urinalStations_Girls']);
+  showHint('teachersDesks',   data['teachersDesks']);
+  showHint('teachersChairs',  data['teachersChairs']);
+  showHint('numberOfClassrooms', data['numberOfClassrooms']);
 }
+
 // ═══════════════════════════════════════════════════════
 //  LOGOUT
 // ═══════════════════════════════════════════════════════
 function logout() {
-  if (confirm('Are you sure you want to logout? All data is saved locally and can be resumed later.')) {
-    // Clear auto-save timer
-    clearTimeout(autoSaveTimer);
-    
+  if (confirm('Are you sure you want to logout? Unsaved changes will be lost.')) {
     verifiedRow = null;
     currentLevel = null;
     selectedVacancies = [];
+    prevData = {};
     
     document.getElementById('form-section').classList.remove('show');
     document.getElementById('auth-section').style.display = 'block';
     document.getElementById('logoutBtn').classList.remove('show');
-    document.getElementById('saveIndicator').classList.remove('show');
+    document.getElementById('prevDataBanner').classList.remove('show');
+    document.getElementById('formProgressWrap').classList.remove('show');
+    document.getElementById('valSummary').classList.remove('show');
+    document.getElementById('progressFill').style.width = '0%';
+    document.getElementById('progressPct').textContent = '0%';
+    document.querySelectorAll('.section-status').forEach(b => {
+      b.className = 'section-status pending'; b.textContent = '—';
+    });
+    clearAllErrors();
     document.getElementById('uniqueIdInput').value = '';
     hideAuthError();
     
@@ -2189,9 +2692,307 @@ function logout() {
 }
 
 // ═══════════════════════════════════════════════════════
-//  SUBMIT
+//  VALIDATION ENGINE
+// ═══════════════════════════════════════════════════════
+
+// ── helpers ──
+function isBlank(id) {
+  const el = document.getElementById(id);
+  return !el || el.value === '' || el.value === null;
+}
+function radioBlank(name) {
+  return !document.querySelector(`input[name="${name}"]:checked`);
+}
+function markFieldError(id, msg) {
+  const el = document.getElementById(id);
+  if (!el) return;
+  el.classList.add('field-error');
+  // show inline message if there's a sibling slot
+  let msgEl = el.parentElement.querySelector('.field-error-msg');
+  if (!msgEl) {
+    msgEl = document.createElement('div');
+    msgEl.className = 'field-error-msg';
+    el.parentElement.appendChild(msgEl);
+  }
+  msgEl.textContent = msg || 'This field is required';
+  msgEl.classList.add('show');
+}
+function markRadioError(name) {
+  const group = document.querySelector(`input[name="${name}"]`)?.closest('.input-group');
+  if (!group) return;
+  const rg = group.querySelector('.radio-group, .checkbox-group');
+  if (rg) rg.classList.add('group-error');
+}
+function clearAllErrors() {
+  document.querySelectorAll('.field-error').forEach(el => el.classList.remove('field-error'));
+  document.querySelectorAll('.field-error-msg').forEach(el => { el.classList.remove('show'); el.textContent=''; });
+  document.querySelectorAll('.radio-group.group-error, .checkbox-group.group-error')
+    .forEach(el => el.classList.remove('group-error'));
+  document.querySelectorAll('.section-header.has-errors')
+    .forEach(el => el.classList.remove('has-errors'));
+}
+
+// ── open a section by its data-section key ──
+function openSection(key) {
+  const header = document.querySelector(`.section-header[data-section="${key}"]`);
+  if (!header) return;
+  // close others
+  document.querySelectorAll('.section-header').forEach(h => h.classList.remove('open'));
+  document.querySelectorAll('.section-body').forEach(b => b.classList.remove('open'));
+  header.classList.add('open');
+  const body = header.nextElementSibling;
+  if (body) body.classList.add('open');
+  header.scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+// ── set section badge ──
+function setSectionStatus(key, state) { // state: 'complete' | 'incomplete' | 'pending'
+  const badge = document.getElementById('status-' + key);
+  const header = document.querySelector(`.section-header[data-section="${key}"]`);
+  if (!badge) return;
+  badge.className = 'section-status ' + state;
+  badge.textContent = state === 'complete' ? '✓' : state === 'incomplete' ? '!' : '—';
+  badge.title = state === 'complete' ? 'Complete' : state === 'incomplete' ? 'Incomplete — action needed' : 'Not yet checked';
+  if (header) header.classList.toggle('has-errors', state === 'incomplete');
+}
+
+// ── update progress bar ──
+function updateProgress() {
+  const sections = ['enrol','staff','furn','class','accom','water','sanit','proj','equip','facil'];
+  const complete  = sections.filter(s => {
+    const badge = document.getElementById('status-' + s);
+    return badge && badge.classList.contains('complete');
+  }).length;
+  const pct = Math.round((complete / sections.length) * 100);
+  document.getElementById('progressFill').style.width = pct + '%';
+  document.getElementById('progressPct').textContent  = pct + '%';
+}
+
+// ── main validate function — returns array of error objects ──
+function validateForm() {
+  clearAllErrors();
+  const errors = []; // { section, sectionKey, fields:[] }
+  const config  = LEVEL_CONFIG[currentLevel];
+
+  function addError(sectionKey, sectionName, fieldLabel, fieldId) {
+    let sec = errors.find(e => e.sectionKey === sectionKey);
+    if (!sec) { sec = { sectionKey, sectionName, fields: [] }; errors.push(sec); }
+    sec.fields.push({ label: fieldLabel, id: fieldId });
+  }
+
+  // ─── ENROLMENT ───
+  if (config) {
+    config.enrolment.forEach(lvl => {
+      const id = lvl.replace(/\s/g, '');
+      if (isBlank(id + '_Boys'))  { markFieldError(id+'_Boys',  'Required'); addError('enrol','Enrolment', lvl+' – Boys', id+'_Boys'); }
+      if (isBlank(id + '_Girls')) { markFieldError(id+'_Girls', 'Required'); addError('enrol','Enrolment', lvl+' – Girls', id+'_Girls'); }
+    });
+  }
+  setSectionStatus('enrol', errors.find(e=>e.sectionKey==='enrol') ? 'incomplete' : 'complete');
+
+  // ─── STAFFING ───
+  if (config) {
+    const prefixMap = { 'Kindergarten (KG)':'KG','Primary':'Primary','Junior High School (JHS)':'JHS' };
+    config.staffing.forEach(s => {
+      const p = prefixMap[s];
+      if (isBlank(p+'_MaleTrainedTeachers'))   { markFieldError(p+'_MaleTrainedTeachers','Required');   addError('staff','Staffing', p+' Male Teachers', p+'_MaleTrainedTeachers'); }
+      if (isBlank(p+'_FemaleTrainedTeachers')) { markFieldError(p+'_FemaleTrainedTeachers','Required'); addError('staff','Staffing', p+' Female Teachers', p+'_FemaleTrainedTeachers'); }
+    });
+  }
+  setSectionStatus('staff', errors.find(e=>e.sectionKey==='staff') ? 'incomplete' : 'complete');
+
+  // ─── FURNITURE ───
+  if (config) {
+    config.furniture.kg.forEach(lvl => {
+      const id = lvl.replace(/\s/g,'');
+      ['HexTables','SittingPlaces','WritingPlaces'].forEach(f => {
+        if (isBlank(id+'_'+f)) { markFieldError(id+'_'+f,'Required'); addError('furn','Furniture', lvl+' – '+f.replace(/([A-Z])/g,' $1').trim(), id+'_'+f); }
+      });
+    });
+    config.furniture.desk.forEach(lvl => {
+      const id = lvl.replace(/\s/g,'');
+      ['MonoDesks','DualDesks'].forEach(f => {
+        if (isBlank(id+'_'+f)) { markFieldError(id+'_'+f,'Required'); addError('furn','Furniture', lvl+' – '+f, id+'_'+f); }
+      });
+    });
+  }
+  setSectionStatus('furn', errors.find(e=>e.sectionKey==='furn') ? 'incomplete' : 'complete');
+
+  // ─── CLASSROOMS ───
+  if (isBlank('numberOfClassrooms')) { markFieldError('numberOfClassrooms','Required'); addError('class','Classrooms & Vacancies','Number of Classrooms','numberOfClassrooms'); }
+  if (config) {
+    config.classrooms.forEach(c => {
+      if (isBlank(c+'_PermanentClassrooms')) { markFieldError(c+'_PermanentClassrooms','Required'); addError('class','Classrooms & Vacancies', c+' Permanent Classrooms', c+'_PermanentClassrooms'); }
+      if (isBlank(c+'_TemporaryClassrooms')) { markFieldError(c+'_TemporaryClassrooms','Required'); addError('class','Classrooms & Vacancies', c+' Temporary Classrooms', c+'_TemporaryClassrooms'); }
+    });
+  }
+  setSectionStatus('class', errors.find(e=>e.sectionKey==='class') ? 'incomplete' : 'complete');
+
+  // ─── STAFF ACCOMMODATION ───
+  if (radioBlank('hasStaffAccommodation')) {
+    markRadioError('hasStaffAccommodation');
+    addError('accom','Staff Accommodation','Has Staff Accommodation?','');
+  } else if (getRadioValue('hasStaffAccommodation') === 'Yes') {
+    if (isBlank('staffAccom_Total')) { markFieldError('staffAccom_Total','Required'); addError('accom','Staff Accommodation','Total Teachers Occupying','staffAccom_Total'); }
+    if (isBlank('staffAccom_Male'))  { markFieldError('staffAccom_Male','Required');  addError('accom','Staff Accommodation','Male Teachers','staffAccom_Male'); }
+    if (isBlank('staffAccom_Female')){ markFieldError('staffAccom_Female','Required');addError('accom','Staff Accommodation','Female Teachers','staffAccom_Female'); }
+  }
+  setSectionStatus('accom', errors.find(e=>e.sectionKey==='accom') ? 'incomplete' : 'complete');
+
+  // ─── WATER SUPPLY ───
+  if (radioBlank('hasWaterAccess')) {
+    markRadioError('hasWaterAccess');
+    addError('water','Water Supply','Has Water Access?','');
+  } else if (getRadioValue('hasWaterAccess') === 'Yes') {
+    if (radioBlank('waterOwnership')) { markRadioError('waterOwnership'); addError('water','Water Supply','Water Source Ownership',''); }
+    if (radioBlank('waterShared'))    { markRadioError('waterShared');    addError('water','Water Supply','Shared with Nearby School?',''); }
+    if (getCheckboxValues('waterSourceTypes').length === 0) {
+      const grp = document.querySelector('input[name="waterSourceTypes"]')?.closest('.input-group');
+      if (grp) { const cg=grp.querySelector('.checkbox-group'); if(cg) cg.classList.add('group-error'); }
+      addError('water','Water Supply','Water Source Type(s)','');
+    }
+  }
+  setSectionStatus('water', errors.find(e=>e.sectionKey==='water') ? 'incomplete' : 'complete');
+
+  // ─── SANITATION ───
+  ['ownsToilet','learnersToiletAccess','ownsUrinal','learnersUrinalAccess'].forEach(name => {
+    if (radioBlank(name)) { markRadioError(name); addError('sanit','Sanitation Facilities', name.replace(/([A-Z])/g,' $1').replace('owns','Owns').replace('learners','Learners'), ''); }
+  });
+  ['toiletCubicles_Boys','toiletCubicles_Girls','urinalStations_Boys','urinalStations_Girls'].forEach(id => {
+    if (isBlank(id)) { markFieldError(id,'Required'); addError('sanit','Sanitation Facilities', id.replace(/_/g,' ').replace(/([A-Z])/g,' $1'), id); }
+  });
+  setSectionStatus('sanit', errors.find(e=>e.sectionKey==='sanit') ? 'incomplete' : 'complete');
+
+  // ─── ONGOING PROJECTS ───
+  if (radioBlank('hasOngoingProjects')) {
+    markRadioError('hasOngoingProjects');
+    addError('proj','Ongoing Projects','Has Ongoing Projects?','');
+  }
+  setSectionStatus('proj', errors.find(e=>e.sectionKey==='proj') ? 'incomplete' : 'complete');
+
+  // ─── TEACHERS' FURNITURE ───
+  if (isBlank('teachersDesks'))  { markFieldError('teachersDesks','Required');  addError('equip',"Teachers' Furniture","Number of Teachers' Desks",'teachersDesks'); }
+  if (isBlank('teachersChairs')) { markFieldError('teachersChairs','Required'); addError('equip',"Teachers' Furniture","Number of Teachers' Chairs",'teachersChairs'); }
+  setSectionStatus('equip', errors.find(e=>e.sectionKey==='equip') ? 'incomplete' : 'complete');
+
+  // ─── FACILITIES & PROGRAMS ───
+  ['hasStaffCommonRoom','hasICTLab','hasLibrary','hasSchoolFarm','isGALOP','isSchoolFeeding','hasElectricity'].forEach(name => {
+    if (radioBlank(name)) { markRadioError(name); addError('facil','Facilities & Programs', name.replace(/([A-Z])/g,' $1').replace(/^has/,'Has').replace(/^is/,'Is'), ''); }
+  });
+  if (getRadioValue('hasElectricity') === 'Yes' && radioBlank('electricitySource')) {
+    markRadioError('electricitySource');
+    addError('facil','Facilities & Programs','Electricity Source','');
+  }
+  setSectionStatus('facil', errors.find(e=>e.sectionKey==='facil') ? 'incomplete' : 'complete');
+
+  updateProgress();
+  return errors;
+}
+
+// ── render validation summary panel ──
+function renderValSummary(errors) {
+  const panel = document.getElementById('valSummary');
+  const list  = document.getElementById('valSummaryList');
+  if (!errors.length) { panel.classList.remove('show'); return; }
+
+  list.innerHTML = errors.map(sec => `
+    <div class="val-summary-item" onclick="openSection('${sec.sectionKey}')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+      <div>
+        <div class="val-summary-section">${sec.sectionName}</div>
+        <div class="val-summary-fields">${sec.fields.slice(0,4).map(f=>f.label).join(' · ')}${sec.fields.length>4?' · …':''}</div>
+      </div>
+    </div>`).join('');
+
+  panel.classList.add('show');
+  panel.scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+// ── live re-validation on any input change (updates badges silently) ──
+function liveValidate() {
+  // silently re-run just the status badges without showing error messages
+  const config = LEVEL_CONFIG[currentLevel];
+  if (!config) return;
+
+  function secOk(checks) { return checks.every(Boolean); }
+
+  // enrolment
+  const enrolOk = config.enrolment.every(lvl => {
+    const id = lvl.replace(/\s/g,'');
+    return !isBlank(id+'_Boys') && !isBlank(id+'_Girls');
+  });
+  setSectionStatus('enrol', enrolOk ? 'complete' : 'pending');
+
+  // staffing
+  const pmMap = {'Kindergarten (KG)':'KG','Primary':'Primary','Junior High School (JHS)':'JHS'};
+  const staffOk = config.staffing.every(s => {
+    const p = pmMap[s];
+    return !isBlank(p+'_MaleTrainedTeachers') && !isBlank(p+'_FemaleTrainedTeachers');
+  });
+  setSectionStatus('staff', staffOk ? 'complete' : 'pending');
+
+  // furniture
+  const furnOk = config.furniture.kg.every(lvl => {
+    const id=lvl.replace(/\s/g,'');
+    return !isBlank(id+'_HexTables') && !isBlank(id+'_SittingPlaces') && !isBlank(id+'_WritingPlaces');
+  }) && config.furniture.desk.every(lvl => {
+    const id=lvl.replace(/\s/g,'');
+    return !isBlank(id+'_MonoDesks') && !isBlank(id+'_DualDesks');
+  });
+  setSectionStatus('furn', furnOk ? 'complete' : 'pending');
+
+  // classrooms
+  const classOk = !isBlank('numberOfClassrooms') && config.classrooms.every(c =>
+    !isBlank(c+'_PermanentClassrooms') && !isBlank(c+'_TemporaryClassrooms'));
+  setSectionStatus('class', classOk ? 'complete' : 'pending');
+
+  // accommodation
+  const accomAns = getRadioValue('hasStaffAccommodation');
+  const accomOk  = accomAns === 'No' || (accomAns === 'Yes' && !isBlank('staffAccom_Total') && !isBlank('staffAccom_Male') && !isBlank('staffAccom_Female'));
+  setSectionStatus('accom', accomAns && accomOk ? 'complete' : accomAns ? 'pending' : 'pending');
+
+  // water
+  const waterAns = getRadioValue('hasWaterAccess');
+  const waterOk  = waterAns === 'No' || (waterAns === 'Yes' && !radioBlank('waterOwnership') && !radioBlank('waterShared') && getCheckboxValues('waterSourceTypes').length > 0);
+  setSectionStatus('water', waterAns && waterOk ? 'complete' : 'pending');
+
+  // sanitation
+  const sanitOk = ['ownsToilet','learnersToiletAccess','ownsUrinal','learnersUrinalAccess'].every(n => !radioBlank(n))
+    && ['toiletCubicles_Boys','toiletCubicles_Girls','urinalStations_Boys','urinalStations_Girls'].every(id => !isBlank(id));
+  setSectionStatus('sanit', sanitOk ? 'complete' : 'pending');
+
+  // projects
+  setSectionStatus('proj', !radioBlank('hasOngoingProjects') ? 'complete' : 'pending');
+
+  // equipment
+  const equipOk = !isBlank('teachersDesks') && !isBlank('teachersChairs');
+  setSectionStatus('equip', equipOk ? 'complete' : 'pending');
+
+  // facilities
+  const facilOk = ['hasStaffCommonRoom','hasICTLab','hasLibrary','hasSchoolFarm','isGALOP','isSchoolFeeding','hasElectricity'].every(n => !radioBlank(n))
+    && (getRadioValue('hasElectricity') !== 'Yes' || !radioBlank('electricitySource'));
+  setSectionStatus('facil', facilOk ? 'complete' : 'pending');
+
+  updateProgress();
+}
+
+// ═══════════════════════════════════════════════════════
+//  SUBMIT (now gated by validation)
 // ═══════════════════════════════════════════════════════
 function submitForm() {
+  // Run full validation first
+  const errors = validateForm();
+  renderValSummary(errors);
+
+  if (errors.length > 0) {
+    // Open the first failing section automatically
+    openSection(errors[0].sectionKey);
+    showToast(errors.length + ' section(s) need attention before submitting', 'error');
+    return;
+  }
+
+  // All clear — proceed
+  document.getElementById('valSummary').classList.remove('show');
   const btn = document.getElementById('submitBtn');
   btn.disabled = true;
   showOverlay(true);
@@ -2933,5 +3734,4 @@ function showOverlay(s) {
 }
 </script>
 </body>
-
 </html>
